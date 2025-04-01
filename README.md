@@ -1,20 +1,17 @@
 # 우송대학교 2025년도 1학기 캡스톤 디자인 1
 
----
 <div align="center" ><h2>비문을 이용한 반려동물 확인 서비스</h2></div>
 <div align="center" ><h4> 2025년  03월  14일 ~   2025년   06월  20일</h4></div>
 
-#### 
+ 
 
 ## 📝 개요 <a name = "outline"></a>
 
----
 #### 이 앱은 반려동물의 비문(코 주름) 패턴을 이용한 생체인증 기술을 활용하여 신뢰할 수 있는 반려동물 인증 시스템을 제공합니다.
 
 
 ## 🚀 주요 기능
 
----
 - 🔍 **비문 인식 및 등록**: 반려동물의 비문을 스캔하여 고유한 생체정보 등록
 - ✅ **빠르고 정확한 인증**: 비문 비교를 통해 반려동물의 신원 확인
 - 🛡 **유기동물 방지**: 등록된 정보로 주인을 추적하여 반려동물 분실 및 유기 방지
@@ -24,7 +21,6 @@
 
 <div ><h1>📚 STACKS</h1></div>
 
----
 <div> 
   <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white">
   <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=Dart&logoColor=white">
@@ -77,7 +73,6 @@ Public
 
 ## 👩🏻‍💻 팀원
 
----
 |                      **gns1719**                      |                      **llHyun**                      |                      **Junghyeongjun**                      |
 |:-----------------------------------------------------:|:----------------------------------------------------:|:-----------------------------------------------------------:|
 | <img src="https://github.com/gns1719.png" width="80"> | <img src="https://github.com/llHyun.png" width="80"> | <img src="https://github.com/Junghyeongjun.png" width="80"> |
