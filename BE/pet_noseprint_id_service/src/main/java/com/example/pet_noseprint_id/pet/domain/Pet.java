@@ -3,12 +3,14 @@ package com.example.pet_noseprint_id.pet.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDate;
 
 @Table(name = "Pet")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pet {
