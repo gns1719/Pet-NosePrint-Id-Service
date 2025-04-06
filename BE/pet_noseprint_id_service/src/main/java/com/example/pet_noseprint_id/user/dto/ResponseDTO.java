@@ -1,4 +1,4 @@
-package com.example.pet_noseprint_id.member.dto;
+package com.example.pet_noseprint_id.user.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,37 +1,41 @@
+# 프로젝트 설명 파일 (필요에 따라 유지 가능)
 HELP.md
-.gradle
+
+# Gradle 관련 파일 & 빌드 폴더 무시
+.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### STS ###
+# Spring Boot 환경 설정 파일 무시 (민감 정보 보호)
+src/main/resources/application.properties
+src/main/resources/application.yml
+
+# 특정 환경 설정 폴더 무시 (환경 변수 등)
+src/main/resources/config/
+
+# Eclipse (STS) 관련 파일 무시
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea
+# IntelliJ IDEA 관련 파일 무시
+.idea/
 *.iws
 *.iml
 *.ipr
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
 
-### NetBeans ###
+# NetBeans 관련 파일 무시
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
+# VS Code 관련 파일 무시
 .vscode/

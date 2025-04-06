@@ -1,26 +1,30 @@
-package com.example.pet_noseprint_id.member.service;
+package com.example.pet_noseprint_id.user.service;
 
 
+import com.example.pet_noseprint_id.user.domain.User;
+import com.example.pet_noseprint_id.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final UserRepository userRepository;
 
-    public Long save(AddUserRequest request) {
-        userRepository.findByEmail(request.getEmail())
-                .ifPresent(member -> {
-                    throw new IllegalArgumentException("아이디 중복");
-                });
-
-        return userRepository.save(User.builder()
-                .email(request.getEmail())
-                .nickName(request.getNickName())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .phone(request.getPhone())
-                .build()).getId();
+    // 이메일 중복 검사
+    public void checkEmailDuplicate(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
     }
+
+    // User 저장 (공통 로직)
+    @Transactional
+    public Long saveUser(User user) {
+        checkEmailDuplicate(user.getEmail()); // 저장 전에 중복 검사
+        return userRepository.save(user).getUserId();
+    }
+
+
 }

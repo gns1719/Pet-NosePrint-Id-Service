@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddUserRequest {
+public class AddUserRequestDTO {
     private String email;
     private String name;
     private String phone;

@@ -1,4 +1,4 @@
-package com.example.pet_noseprint_id_service;
+package com.example.pet_noseprint_id;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
