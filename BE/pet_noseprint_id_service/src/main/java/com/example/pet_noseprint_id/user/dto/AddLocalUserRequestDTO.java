@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocalSignUpRequestDTO {
+public class AddLocalUserRequestDTO {
     private String name;
     private String phoneNumber;
     private String email;
     private String id;
-    private String pw;
+    private String password;
 }

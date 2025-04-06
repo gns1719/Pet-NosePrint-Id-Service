@@ -1,19 +1,16 @@
 package com.example.pet_noseprint_id.user.domain;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table("Local_User")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LocalUserEntity {
+public class LocalUser {
     @Id
-    private Long userId;
-    private String id;
-    private String pw;
-    private String salt;
-
+    private Long userId;  // `User` 테이블의 `User_ID`를 참조
+    private String id;    // 로그인 ID (Unique)
+    private String password;    // 비밀번호
 }
