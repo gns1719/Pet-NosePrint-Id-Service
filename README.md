@@ -44,34 +44,29 @@
 
 
 
+<br/>
 
-<!--
 ### 디렉토리 구조
 
 ```
-Public
-│   README.md               # 개발 기록
-│
-└───EricaPlace
-    │   db.sqlite3          # 데이터베이스 파일
-    │   manage.py           # 실행 파일
-    │   requirements.txt    # 패키지 버전
-    │
-    └───EricaPlace
-    │       settings.py     # 환경 세팅
-    │       urls.py         # URL 등록
-    │
-    └───director            # 관리자 페이지
-    └───faq                 # 자주 묻는 질문
-    └───main                # 메인 페이지
-    └───media               # 미디어 리소스
-    └───rsv                 # 대관 신청 페이지
-    └───static              # 스태틱 리소스
-    └───status              # 신청 현황 페이지
-    └───templates           # 범용 템플릿
+├───AI                            
+├───BE                              
+│   └───src
+│       ├───docs               # Spring REST Docs 등의 API 문서 디렉토리
+│       ├───main
+│       │   ├───config        # 전역 설정 (보안, WebMvc 등)
+│       │   ├───controller    # API 요청을 처리하는 컨트롤러 계층
+│       │   ├───domain        # JPA Entity 등 핵심 도메인 모델
+│       │   ├───dto           # 요청/응답 데이터 전달 객체
+│       │   ├───redis         # Redis 관련 설정 및 구현
+│       │   ├───repository    # 데이터 접근 계층 (JPA 인터페이스)
+│       │   ├───service       # 비즈니스 로직 계층
+│       │   └───user          # 사용자 도메인 관련 코드
+│       └───test                      # 테스트 코드 디렉토리
+├───README.md                        # 프로젝트 소개 및 설명 파일
+
 ```
 
--->
 
 <br/>
 
@@ -85,6 +80,11 @@ Public
 
 ## 💁‍♂️ Detail Role
 + [김회훈](https://github.com/gns1719) / Back-end & Front-end 
+  - Spring Boot 기반 반려동물 인증 백엔드 시스템 개발
+  - Redis를 활용한 JWT 리프레시 토큰 저장 및 인증 처리 구현
+  - 사용자 인증 및 보안 로직 (JWT 발급, 갱신, 로그아웃 등) 개발
+  - Flutter 앱과의 통신을 위한 REST API 설계 및 구현
+  - Spring REST Docs를 활용한 API 문서 자동화 및 정리
 
   <!-- 
     예시 입니다. 각자 기능 구현 후 하나 씩 추가해주세요.
