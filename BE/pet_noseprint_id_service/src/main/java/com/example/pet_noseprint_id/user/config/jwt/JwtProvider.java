@@ -74,4 +74,26 @@ public class JwtProvider {
     }
 
 
+    // 토큰으로부터 인증 정보 조회
+    public Authentication getAuthentication(String token) {
+        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+
+        return new UsernamePasswordAuthenticationToken(
+                getUserId(token),
+                token,
+                authorities
+        );
+    }
+
+    public String getUserId(String token) {
+        Claims claims = getClaims(token);
+        return claims.get("userId", String.class);
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(accessSecretKey).build()
+                .parseSignedClaims(token)
+                .getBody();
+    }
 }

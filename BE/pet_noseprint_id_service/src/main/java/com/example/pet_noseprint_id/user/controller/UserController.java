@@ -9,6 +9,7 @@ import com.example.pet_noseprint_id.user.dto.ResponseDTO;
 import com.example.pet_noseprint_id.user.service.LocalUserService;
 import com.example.pet_noseprint_id.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -63,7 +65,7 @@ public class UserController {
                         request.getEmail()));
 
         localUserService.saveLocal(
-                new LocalUser(userId,
+                new LocalUser(null,userId,
                         request.getId(),
                         passwordEncoder.encode(request.getPassword()))
                 );

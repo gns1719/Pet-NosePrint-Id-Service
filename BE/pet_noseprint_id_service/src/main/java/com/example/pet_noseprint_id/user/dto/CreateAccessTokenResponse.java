@@ -1,2 +1,11 @@
-package com.example.pet_noseprint_id.user.dto;public class CreateAccessTokenResponse {
+package com.example.pet_noseprint_id.user.dto;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class CreateAccessTokenResponse {
+    private String accessToken;
 }

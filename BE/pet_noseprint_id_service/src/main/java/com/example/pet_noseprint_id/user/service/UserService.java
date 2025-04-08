@@ -23,7 +23,7 @@ public class UserService {
     @Transactional
     public Long saveUser(User user) {
         checkEmailDuplicate(user.getEmail()); // 저장 전에 중복 검사
-        return userRepository.save(user).getUserId();
+        return userRepository.save(user).getUserKey();
     }
 
 

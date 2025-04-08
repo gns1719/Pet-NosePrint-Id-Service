@@ -9,8 +9,10 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Table("OAuth_User")
 public class OAuthUser {
+
     @Id
-    private Long userId;     // `User` 테이블의 `User_ID`를 참조
-    private String provider; // OAuth 제공자 (Google, Kakao 등)
-    private String providerKey; // OAuth 제공자가 부여한 고유 ID
+    private Long oauthKey;     // 새로운 PK
+    private Long userKey;          // `User` 테이블의 FK (Unique)
+    private String provider;      // "google" 또는 "kakao"
+    private String providerKey;   // 제공자 고유 ID
 }
