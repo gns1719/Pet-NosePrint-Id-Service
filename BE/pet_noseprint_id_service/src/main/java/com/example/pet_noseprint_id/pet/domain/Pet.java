@@ -8,15 +8,16 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDate;
 
-@Table(name = "Pet")
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table("Pet")
 public class Pet {
     @Id
     private Long petId;         //펫 아이디
-    private Long userID;        //유저 아이디
+    private Long ownerId;        //유저 아이디
     private String name;        //펫 이름
     private LocalDate birth;    //펫 생일
     private String gender;      //펫 성별

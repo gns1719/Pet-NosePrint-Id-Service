@@ -15,10 +15,10 @@ public class PetService {
 
     private final PetRepository petRepository;
 
-    public void addPet(Long userId, AddPetRequest request) {
+    public void addPet(AddPetRequest request) {
         Pet pet = new Pet(
                 null, // petId는 DB에서 auto-increment
-                userId,
+                request.getOwnerId(),
                 request.getName(),
                 request.getBirth(),
                 request.getGender(),

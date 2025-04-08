@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "NosePrint")
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+//@Getter
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Table("NosePrint")
 public class NosePrint {
-    @Id
+    //@Id
     private Long petId;         //펫 아이디
     private Long userId;        //유저 아이디
     private String nosePrint;   //비문(url)

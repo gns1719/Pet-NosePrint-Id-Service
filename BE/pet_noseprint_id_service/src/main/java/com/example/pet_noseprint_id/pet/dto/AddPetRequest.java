@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddPetRequest {
-    private Long userId;        // 주인의 ID (서버 측에서 주입)(나중에 토큰에서 추출로 변경)
+    private Long ownerId;        // 주인의 ID (서버 측에서 주입)(나중에 토큰에서 추출로 변경)
     private String name;        // 펫 이름
     private LocalDate birth;    // 펫 생일
     private String gender;      // 펫 성별

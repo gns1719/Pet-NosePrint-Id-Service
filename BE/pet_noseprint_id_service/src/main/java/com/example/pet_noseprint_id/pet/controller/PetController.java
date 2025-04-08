@@ -18,7 +18,7 @@ public class PetController {
 
     @PostMapping
     public ResponseEntity<Void> addPet(@RequestBody AddPetRequest request) {
-        petService.addPet(request.getUserId(), request);
+        petService.addPet(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

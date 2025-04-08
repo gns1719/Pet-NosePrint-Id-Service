@@ -1,11 +1,9 @@
 package com.example.pet_noseprint_id.pet.repository;
 
 import com.example.pet_noseprint_id.pet.domain.Pet;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.CrudRepository;
 
 
-@Repository
-public interface PetRepository extends JpaRepository<Pet, Long> {
+public interface PetRepository extends CrudRepository<Pet, Long> {
 
 }
