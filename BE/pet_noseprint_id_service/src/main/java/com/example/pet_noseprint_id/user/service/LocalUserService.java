@@ -16,9 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class LocalUserService {
     private final LocalUserRepository localUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
     private final JwtProvider jwtProvider;
 
-    private Long accessExpireTimeMs = 60 * 60 * 1000L;  // 1시간
+    private Long accessExpireTimeMs = 60 * 60 * 250L;  // 15분
     private Long refreshExpireTimeMs = 14 * 24 * 60 * 60 * 1000L;  // 14일
 
     // 이메일 중복 검사
@@ -32,7 +33,7 @@ public class LocalUserService {
     public Long saveLocal(LocalUser localUser) {
 
         // 로컬 회원 정보 저장 (User_ID 참조)
-        return localUserRepository.save(localUser).getUserId();
+        return localUserRepository.save(localUser).getUserKey();
     }
 
     // 로그인
@@ -47,11 +48,13 @@ public class LocalUserService {
             throw new IllegalArgumentException("password 틀림");
         }
 
-        String accessToken = jwtProvider.createAccessToken(localUser.getUserId(), accessExpireTimeMs);
-        String refreshToken = jwtProvider.createRefreshToken(localUser.getUserId(), refreshExpireTimeMs);
+        String accessToken = jwtProvider.createAccessToken(localUser.getUserKey(), accessExpireTimeMs);
+        String refreshToken = jwtProvider.createRefreshToken(localUser.getUserKey(), refreshExpireTimeMs);
+
+        refreshTokenService.saveTokenInfo(localUser.getUserKey(), refreshToken);
 
         return LoginUserResponse.builder()
-                .userId(localUser.getUserId())
+                .userId(localUser.getUserKey())
                 .id(localUser.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -59,4 +62,5 @@ public class LocalUserService {
                 .build();
 
     }
+
 }

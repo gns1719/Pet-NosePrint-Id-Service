@@ -1,0 +1,11 @@
+// index.adoc
+
+:doctype: book
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+= Fluffy API 명세서
+
+include::exam.adoc[]
