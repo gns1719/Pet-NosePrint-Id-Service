@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddLocalUserRequestDTO {
-    private String name;
-    private String phoneNumber;
-    private String email;
+public class LoginUserReqDTO {
     private String id;
     private String password;
 }

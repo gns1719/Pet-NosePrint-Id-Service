@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Builder
-public class LoginUserResponse {
+public class LoginUserResDTO {
 
     private Long userId;
-    private String id;
 
     private String accessToken;
     private String refreshToken;

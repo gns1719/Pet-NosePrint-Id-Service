@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 public interface LocalUserRepository extends CrudRepository<LocalUser, Long> {
-    Optional<LocalUser> findById(Long id);
+    Optional<LocalUser> findById(String id);
 
     boolean existsById(String id);
 }

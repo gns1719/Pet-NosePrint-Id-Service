@@ -14,11 +14,15 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/docs/**", "/h2-console/**").permitAll() // 여기에 공개하고 싶은 경로 추가
-                        .anyRequest().permitAll() // 나머지도 인증 없이 접근
+                        .requestMatchers("/docs/**", "/h2-console/**").permitAll()
+                        .anyRequest().permitAll()
                 )
-                .formLogin(AbstractHttpConfigurer::disable) // 로그인 폼 제거
-                .httpBasic(AbstractHttpConfigurer::disable);// HTTP Basic 인증 제거
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/login/success", true) // 로그인 성공 후 리다이렉트 URL
+                );
+
         return http.build();
     }
 }

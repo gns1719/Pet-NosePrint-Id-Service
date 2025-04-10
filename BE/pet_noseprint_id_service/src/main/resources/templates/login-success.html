@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 성공</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            padding: 30px;
+        }
+        .token-box {
+            background: #f2f2f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🎉 로그인 성공!</h1>
+
+<div class="token-box">
+    <h3>User ID:</h3>
+    <p th:text="${userId}">유저 ID</p>
+</div>
+
+<div class="token-box">
+    <h3>Access Token:</h3>
+    <p th:text="${accessToken}">Access Token</p>
+</div>
+
+<div class="token-box">
+    <h3>Refresh Token:</h3>
+    <p th:text="${refreshToken}">Refresh Token</p>
+</div>
+
+</body>
+</html>

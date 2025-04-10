@@ -2,23 +2,22 @@ package com.example.pet_noseprint_id.user.service;
 
 import com.example.pet_noseprint_id.user.config.jwt.JwtProvider;
 import com.example.pet_noseprint_id.user.domain.LocalUser;
-import com.example.pet_noseprint_id.user.domain.User;
-import com.example.pet_noseprint_id.user.dto.LoginUserRequest;
-import com.example.pet_noseprint_id.user.dto.LoginUserResponse;
+import com.example.pet_noseprint_id.user.dto.LoginUserReqDTO;
+import com.example.pet_noseprint_id.user.dto.LoginUserResDTO;
 import com.example.pet_noseprint_id.user.repository.LocalUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class LocalUserService {
     private final LocalUserRepository localUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
     private final JwtProvider jwtProvider;
 
-    private Long accessExpireTimeMs = 60 * 60 * 1000L;  // 1시간
+    private Long accessExpireTimeMs = 60 * 60 * 250L;  // 15분
     private Long refreshExpireTimeMs = 14 * 24 * 60 * 60 * 1000L;  // 14일
 
     // 이메일 중복 검사
@@ -32,11 +31,11 @@ public class LocalUserService {
     public Long saveLocal(LocalUser localUser) {
 
         // 로컬 회원 정보 저장 (User_ID 참조)
-        return localUserRepository.save(localUser).getUserId();
+        return localUserRepository.save(localUser).getUserKey();
     }
 
     // 로그인
-    public LoginUserResponse login(LoginUserRequest request) {
+    public LoginUserResDTO login(LoginUserReqDTO request) {
 
         // id 확인
         LocalUser localUser = localUserRepository.findById(request.getId())
@@ -47,16 +46,18 @@ public class LocalUserService {
             throw new IllegalArgumentException("password 틀림");
         }
 
-        String accessToken = jwtProvider.createAccessToken(localUser.getUserId(), accessExpireTimeMs);
-        String refreshToken = jwtProvider.createRefreshToken(localUser.getUserId(), refreshExpireTimeMs);
+        String accessToken = jwtProvider.createAccessToken(localUser.getUserKey(), accessExpireTimeMs);
+        String refreshToken = jwtProvider.createRefreshToken(localUser.getUserKey(), refreshExpireTimeMs);
 
-        return LoginUserResponse.builder()
-                .userId(localUser.getUserId())
-                .id(localUser.getId())
+        refreshTokenService.saveTokenInfo(localUser.getUserKey(), refreshToken);
+
+        return LoginUserResDTO.builder()
+                .userId(localUser.getUserKey())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .build();
 
     }
+
 }

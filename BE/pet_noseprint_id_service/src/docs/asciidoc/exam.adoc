@@ -1,0 +1,13 @@
+== 사용자 API
+
+=== 회원 가입 (로컬)
+
+요청과 응답 예시는 다음과 같습니다.
+
+operation::signup-local-user[]
+
+=== 로그인 (로컬)
+
+로그인 요청 및 응답 예시는 다음과 같습니다.
+
+operation::login-local-user[]
