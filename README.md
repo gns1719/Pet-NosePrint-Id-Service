@@ -97,6 +97,11 @@
 <Br>
 
 + [이도현](https://github.com/llHyun) / Back-end & Front-end
+  - Spring Boot 기반 반려동물 인증 백엔드 시스템 개발
+  - 사용자-반려동물 관계 기반 도메인 및 DB 구조 설계 및 구현
+  - AI 연동 특성을 반영한 비문 데이터 구조 분리 및 처리 전략 수립
+  - 서버 인증 로직을 고려한 Flutter 로그인 화면 및 동작 설계
+
 
 
 

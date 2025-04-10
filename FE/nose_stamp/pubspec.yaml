@@ -1,0 +1,23 @@
+name: nose_stamp
+description: A new Flutter project.
+
+environment:
+  sdk: '^3.7.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  rename: ^3.0.2
+  url_launcher: ^6.2.5
+  webview_flutter: ^4.2.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/naver_logo.png
+    - assets/images/kakao_logo.png
+    - assets/images/google_logo.png
+
+
+dev_dependencies:
+  flutter_lints: ^3.0.1  # 또는 최신 버전
