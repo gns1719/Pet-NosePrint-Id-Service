@@ -1,4 +1,4 @@
-package com.example.pet_noseprint_id.user.dto;
+package com.example.pet_noseprint_id.user.dto.oauth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

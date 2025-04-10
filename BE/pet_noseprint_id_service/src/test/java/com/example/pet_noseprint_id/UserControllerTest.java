@@ -1,11 +1,9 @@
 package com.example.pet_noseprint_id;
 
-import com.example.pet_noseprint_id.user.controller.UserController;
 import com.example.pet_noseprint_id.user.domain.LocalUser;
 import com.example.pet_noseprint_id.user.domain.User;
-import com.example.pet_noseprint_id.user.dto.AddLocalUserRequestDTO;
-import com.example.pet_noseprint_id.user.dto.LoginUserRequest;
-import com.example.pet_noseprint_id.user.dto.LoginUserResponse;
+import com.example.pet_noseprint_id.user.dto.CreateAccessTokenReqDTO;
+import com.example.pet_noseprint_id.user.dto.LoginUserReqDTO;
 import com.example.pet_noseprint_id.user.repository.LocalUserRepository;
 import com.example.pet_noseprint_id.user.repository.UserRepository;
 import com.example.pet_noseprint_id.user.service.LocalUserService;
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -27,19 +24,15 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -109,7 +102,7 @@ public class UserControllerTest {
     @Transactional
     void registerLocalUserTest() throws Exception {
         // Given
-        AddLocalUserRequestDTO request = new AddLocalUserRequestDTO(
+        CreateAccessTokenReqDTO.AddLocalUserReqDTO request = new CreateAccessTokenReqDTO.AddLocalUserReqDTO(
                 "홍길동", "010-1234-5678", "test@example.com", "testUser12", "password123"
         );
 
@@ -140,7 +133,7 @@ public class UserControllerTest {
     @Transactional
     public void localLoginTest() throws Exception {
         // Given
-        LoginUserRequest request = new LoginUserRequest("gns1719", "1254");
+        LoginUserReqDTO request = new LoginUserReqDTO("gns1719", "1254");
 
 
         // When & Then
