@@ -9,6 +9,9 @@ build/
 # Spring Boot 환경 설정 파일 무시 (민감 정보 보호)
 src/main/resources/application.properties
 src/main/resources/application.yml
+# .gitignore
+BE/pet_noseprint_id_service/src/main/resources/application.properties
+
 
 # 특정 환경 설정 폴더 무시 (환경 변수 등)
 src/main/resources/config/
