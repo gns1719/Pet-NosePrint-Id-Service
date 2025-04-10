@@ -1,4 +1,4 @@
-package com.example.pet_noseprint_id.user.dto;
+package com.example.pet_noseprint_id.user.dto.local;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Builder
-public class LoginUserResponse {
+public class LoginUserResDTO {
 
     private Long userId;
-    private String id;
 
     private String accessToken;
     private String refreshToken;
