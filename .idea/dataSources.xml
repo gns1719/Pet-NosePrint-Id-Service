@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="redis" uuid="ca79101a-4d7c-4aea-9131-adb61f9f4aae">
+    <data-source source="LOCAL" name="0@localhost" uuid="ca230258-d5f3-4a68-a92e-3b327530b6e6">
       <driver-ref>redis</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>jdbc.RedisDriver</jdbc-driver>

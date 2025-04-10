@@ -29,8 +29,18 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.4.5'
 
+	//oauth 2.0
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	//Webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+
+	//thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 	implementation 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 

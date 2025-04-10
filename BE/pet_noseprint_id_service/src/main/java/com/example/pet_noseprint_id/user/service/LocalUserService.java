@@ -2,14 +2,12 @@ package com.example.pet_noseprint_id.user.service;
 
 import com.example.pet_noseprint_id.user.config.jwt.JwtProvider;
 import com.example.pet_noseprint_id.user.domain.LocalUser;
-import com.example.pet_noseprint_id.user.domain.User;
-import com.example.pet_noseprint_id.user.dto.LoginUserRequest;
-import com.example.pet_noseprint_id.user.dto.LoginUserResponse;
+import com.example.pet_noseprint_id.user.dto.LoginUserReqDTO;
+import com.example.pet_noseprint_id.user.dto.LoginUserResDTO;
 import com.example.pet_noseprint_id.user.repository.LocalUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +35,7 @@ public class LocalUserService {
     }
 
     // 로그인
-    public LoginUserResponse login(LoginUserRequest request) {
+    public LoginUserResDTO login(LoginUserReqDTO request) {
 
         // id 확인
         LocalUser localUser = localUserRepository.findById(request.getId())
@@ -53,9 +51,8 @@ public class LocalUserService {
 
         refreshTokenService.saveTokenInfo(localUser.getUserKey(), refreshToken);
 
-        return LoginUserResponse.builder()
+        return LoginUserResDTO.builder()
                 .userId(localUser.getUserKey())
-                .id(localUser.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
