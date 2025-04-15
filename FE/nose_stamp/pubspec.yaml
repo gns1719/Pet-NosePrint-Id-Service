@@ -10,6 +10,11 @@ dependencies:
   rename: ^3.0.2
   url_launcher: ^6.2.5
   webview_flutter: ^4.2.1
+  google_fonts: ^6.1.0
+  flutter_svg: ^2.0.9
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
+  image_picker: ^1.0.7
 
 flutter:
   uses-material-design: true
@@ -17,6 +22,7 @@ flutter:
     - assets/images/naver_logo.png
     - assets/images/kakao_logo.png
     - assets/images/google_logo.png
+    - assets/images/
 
 
 dev_dependencies:
