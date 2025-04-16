@@ -8,6 +8,7 @@ import com.example.pet_noseprint_id.pet.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import java.util.List;
@@ -41,8 +42,7 @@ public class PetController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<List<PetInfoResponse>> getMyPets(Authentication authentication) {
-        Long userKey = (Long) authentication.getPrincipal();
+    public ResponseEntity<List<PetInfoResponse>> getMyPets(@AuthenticationPrincipal Long userKey) {
         List<PetInfoResponse> myPets = petService.getPetsByUserKey(userKey);
         return ResponseEntity.ok(myPets);
     }
