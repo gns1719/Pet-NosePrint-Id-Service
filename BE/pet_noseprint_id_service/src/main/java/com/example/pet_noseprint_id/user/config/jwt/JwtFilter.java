@@ -26,7 +26,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.startsWith("/users/signup/*") || path.startsWith("/users/login/*")
+        return path.startsWith("/users/oauth/login") || path.startsWith("/users/local/login")
+                || path.startsWith("/users/oauth/signup") || path.startsWith("/users/local/signup")
                 || path.startsWith("/v3/") || path.startsWith("/docs")
                 || path.startsWith("/static/") || path.equals("/");
     }
@@ -36,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-        LOGGER.info("[doFilterInternal] 사용자 검사 로직 시작 request: {}",request);
+
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         String token = getAccessToken(authorizationHeader);
         LOGGER.info("[doFilterInternal] 토큰 추출 완료. token: {}", token);
