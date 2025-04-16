@@ -32,7 +32,7 @@ public class JwtProvider {
     public String createAccessToken(Long userId, Long expireTimeMs) {
         //LOGGER.info("[createToken] Access 토큰 생성 시작");
         String token = Jwts.builder()
-                .claim("userId", userId)
+                .claim("userKey", userId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))
                 .signWith(SignatureAlgorithm.HS256, accessSecretKey)
@@ -46,7 +46,7 @@ public class JwtProvider {
     public String createRefreshToken(Long userId, Long expireTimeMs) {
         //LOGGER.info("[createToken] Refresh 토큰 생성 시작");
         String token = Jwts.builder()
-                .claim("userId", userId)
+                .claim("userKey", userId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))
                 .signWith(SignatureAlgorithm.HS256, refreshSecretKey)
@@ -77,10 +77,12 @@ public class JwtProvider {
     public Authentication getAuthentication(String token) {
 
         return new UsernamePasswordAuthenticationToken(
+
                 getUserKey(token),
                 token
         );
     }
+
 
     public Integer getUserKey(String token) {
         Claims claims = getClaims(token);
