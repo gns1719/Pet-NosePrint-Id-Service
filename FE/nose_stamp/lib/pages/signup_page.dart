@@ -46,14 +46,10 @@ class _SignupPageState extends State<SignupPage> {
     });
 
     try {
-      final response = await http.post(
-        Uri.parse(ApiConfig.checkIdUrl),
+      final response = await http.get(
+        Uri.parse('${ApiConfig.checkIdUrl}?id=${_idController.text}'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'id': _idController.text,
-        }),
       );
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['status'] == true) {
@@ -104,7 +100,7 @@ class _SignupPageState extends State<SignupPage> {
           body: json.encode({
             'id': _idController.text,
             'name': _nameController.text,
-            'phone': _phoneController.text,
+            'phoneNumber': _phoneController.text,
             'email': _emailController.text,
             'password': _passwordController.text,
           }),

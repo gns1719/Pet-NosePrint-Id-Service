@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,18 +20,54 @@ public class PetService {
 
     private final PetRepository petRepository;
 
-    public void addPet(AddPetRequest request, Long userKey) {
+    /*public void addPet(AddPetRequest request, Long userKey) {
         Pet pet = new Pet(
                 null, // petId는 DB에서 auto-increment
                 userKey,
                 request.getName(),
                 request.getBirth(),
-                request.getGender(),
-                request.getProfile()
+                null,   //profile url 은 리턴한 후 등록
+                request.getGender()
         );
 
         petRepository.save(pet);
+    }*/
+    public Long addPet(AddPetRequest request, Long userKey) {
+        Pet pet = new Pet(
+                null,
+                userKey,
+                request.getName(),
+                request.getBirth(),
+                null, // profile URL은 아직 없음
+                request.getGender()
+        );
+
+        Pet saved = petRepository.save(pet); // 저장된 petId 반환
+        return saved.getPetId();
     }
+
+    public void updateProfileUrl(Long petId, Long userKey, String profileUrl) {
+        Optional<Pet> optionalPet = petRepository.findById(petId);
+        Pet pet = optionalPet.orElseThrow(() -> new IllegalArgumentException("해당 펫이 존재하지 않습니다."));
+
+        // userKey 소유자 맞는지 검증
+        if (!pet.getUserKey().equals(userKey)) {
+            throw new SecurityException("해당 펫에 접근 권한이 없습니다.");
+        }
+
+        // 프로필 URL 업데이트
+        Pet updated = new Pet(
+                pet.getPetId(),
+                pet.getUserKey(),
+                pet.getName(),
+                pet.getBirth(),
+                profileUrl,
+                pet.getGender()
+        );
+
+        petRepository.save(updated);
+    }
+
 
     public PetInfoResponse updatePet(Long petId, PetUpdateRequest request, Long userKey) {
         Pet pet = petRepository.findById(petId)
@@ -60,7 +97,7 @@ public class PetService {
         return petRepository.findByUserId(userId);
     }*/
 
-    public List<PetInfoResponse> getPetsByUserKey(Long userKey) {
+    public List<PetInfoResponse> getPetsByUserKey(Integer userKey) {
         List<Pet> pets = petRepository.findByUserKey(userKey);
         return pets.stream()
                 .map(pet -> new PetInfoResponse(
@@ -73,5 +110,9 @@ public class PetService {
                 .collect(Collectors.toList());
     }
 
+
+    public boolean userExists(Integer userKey) {
+        return petRepository.existsByUserKey(userKey);
+    }
 
 }

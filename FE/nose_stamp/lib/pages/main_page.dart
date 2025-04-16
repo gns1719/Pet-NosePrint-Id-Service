@@ -40,32 +40,15 @@ class _MainPageState extends State<MainPage> {
       
       final url = Uri.parse(ApiConfig.petListUrl);
 
-      // 디버깅용 로그 출력
-      print('📡 Sending GET request to: $url');
-      print('🔐 Access Token: $accessToken');
-      print('📝 Headers: { "Authorization": "Bearer $accessToken", "Content-Type": "application/json" }');
 
       final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-          'Content-Type': 'application/json',
-        },
-      );
-
-      // 응답 로그도 출력
-      print('✅ Response Status: ${response.statusCode}');
-      print('📦 Response Body: ${response.body}');
-
-
-      /*final response = await http.get(
         Uri.parse(ApiConfig.petListUrl),
         headers: {
           'Authorization': 'Bearer $accessToken',
           'Content-Type': 'application/json',
         },
-      );*/
-
+      );
+      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
@@ -284,99 +267,102 @@ class _MainPageState extends State<MainPage> {
         padding: const EdgeInsets.all(16),
         itemCount: _pets.length + 1,
         itemBuilder: (context, index) {
-          if (index == 0) {
-            return _buildAddPetCard();
-          }
-          
-          final pet = _pets[index - 1];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DogDetailPage(
-                      dogInfo: {
-                        'petId': pet['petId'].toString(),
-                        'name': pet['name'],
-                        'birthDate': pet['birthDate'],
-                        'profileUrl': pet['profileUrl'],
-                        'gender': pet['gender'],
-                      },
-                      onUpdate: (updatedInfo) {
-                        _updatePet(
-                          petId: int.parse(updatedInfo['petId']!),
-                          name: updatedInfo['name']!,
-                          birthDate: updatedInfo['birthDate']!,
-                          profileUrl: updatedInfo['profileUrl']!,
-                          gender: updatedInfo['gender']!,
-                        );
-                      },
+          if (index < _pets.length) {
+            final pet = _pets[index];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DogDetailPage(
+                        dogInfo: {
+                          'petId': pet['petId'].toString(),
+                          'name': pet['name'],
+                          'birthDate': pet['birth'],
+                          'profileUrl': pet['profile'],
+                          'gender': pet['gender'],
+                        },
+                        onUpdate: (updatedInfo) {
+                          _updatePet(
+                            petId: int.parse(updatedInfo['petId']!),
+                            name: updatedInfo['name']!,
+                            birthDate: updatedInfo['birthDate']!,
+                            profileUrl: updatedInfo['profileUrl']!,
+                            gender: updatedInfo['gender']!,
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                );
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: NetworkImage(pet['profileUrl']),
-                          fit: BoxFit.cover,
+                  );
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Hero(
+                        tag: 'pet_image_${pet['petId']}',
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(8),
+                            image: DecorationImage(
+                              image: NetworkImage(pet['profile']),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            pet['name'],
-                            style: GoogleFonts.notoSans(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              pet['name'],
+                              style: GoogleFonts.notoSans(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '생일: ${pet['birthDate']}',
-                            style: GoogleFonts.notoSans(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
+                            const SizedBox(height: 4),
+                            Text(
+                              '생일: ${pet['birth']}',
+                              style: GoogleFonts.notoSans(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '성별: ${pet['gender']}',
-                            style: GoogleFonts.notoSans(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
+                            const SizedBox(height: 4),
+                            Text(
+                              '성별: ${pet['gender']}',
+                              style: GoogleFonts.notoSans(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const Icon(
-                      Icons.chevron_right,
-                      color: Colors.grey,
-                    ),
-                  ],
+                      const Icon(
+                        Icons.chevron_right,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+          } else {
+            return _buildAddPetCard();
+          }
         },
       ),
     );

@@ -112,14 +112,43 @@ class _DogDetailPageState extends State<DogDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  width: double.infinity,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                      image: NetworkImage(_profileUrlController.text),
-                      fit: BoxFit.cover,
+                Hero(
+                  tag: 'pet_image_${widget.dogInfo['petId']}',
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Scaffold(
+                            backgroundColor: Colors.black,
+                            appBar: AppBar(
+                              backgroundColor: Colors.black,
+                              iconTheme: const IconThemeData(color: Colors.white),
+                            ),
+                            body: Center(
+                              child: InteractiveViewer(
+                                minScale: 0.5,
+                                maxScale: 4.0,
+                                child: Image.network(
+                                  _profileUrlController.text,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        image: DecorationImage(
+                          image: NetworkImage(_profileUrlController.text),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
