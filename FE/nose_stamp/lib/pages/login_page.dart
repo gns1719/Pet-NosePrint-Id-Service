@@ -1,170 +1,275 @@
 import 'package:flutter/material.dart';
-import 'social_login_webview.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'main_layout.dart';
+import 'signup_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:nose_stamp/services/auth_service.dart';
+import 'package:nose_stamp/config/api_config.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final idController = TextEditingController();
-    final pwController = TextEditingController();
+  State<LoginPage> createState() => _LoginPageState();
+}
 
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _idController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final response = await http.post(
+          Uri.parse(ApiConfig.loginUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'id': _idController.text,
+            'password': _passwordController.text,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          final accessToken = data['data']['accessToken'];
+          final refreshToken = data['data']['refreshToken'];
+
+          await AuthService().saveTokens(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          );
+
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MainLayout()),
+            );
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('아이디 또는 비밀번호가 올바르지 않습니다')),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('서버 연결에 실패했습니다')),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Center(
-                child: Column(
-                  children: [
-                    Icon(Icons.pets, size: 64, color: Color(0xFFB88C65)),
-                    SizedBox(height: 8),
-                    Text(
-                      '코도장',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF6D4C41),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 40),
+                  Text(
+                    '반려동물 코지문 인식',
+                    style: GoogleFonts.notoSans(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '반려동물의 고유한 코지문으로\n안전하게 보호하세요',
+                    style: GoogleFonts.notoSans(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 48),
+                  TextFormField(
+                    controller: _idController,
+                    decoration: InputDecoration(
+                      labelText: '아이디',
+                      prefixIcon: const Icon(Icons.person_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    SizedBox(height: 24),
-                  ],
-                ),
-              ),
-              TextField(
-                controller: idController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  labelText: '아이디',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '아이디를 입력해주세요';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: pwController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  labelText: '비밀번호',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: '비밀번호',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '비밀번호를 입력해주세요';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _handleLogin,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator()
+                        : Text(
+                            '로그인',
+                            style: GoogleFonts.notoSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                  const SizedBox(height: 16),
                   TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(foregroundColor: Colors.brown),
-                    child: const Text('회원가입'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignupPage()),
+                      );
+                    },
+                    child: Text(
+                      '계정이 없으신가요? 회원가입',
+                      style: GoogleFonts.notoSans(
+                        color: Colors.blue,
+                      ),
+                    ),
                   ),
-                  const Text('|'),
-                  TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(foregroundColor: Colors.brown),
-                    child: const Text('비밀번호 찾기'),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey.shade300,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          '또는',
+                          style: GoogleFonts.notoSans(
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey.shade300,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  _buildSocialLoginButton(
+                    icon: 'assets/images/google_logo.png',
+                    text: 'Google로 계속하기',
+                    onPressed: () {
+                      // TODO: Google 로그인 구현
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSocialLoginButton(
+                    icon: 'assets/images/naver_logo.png',
+                    text: 'Naver로 계속하기',
+                    onPressed: () {
+                      // TODO: Naver 로그인 구현
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSocialLoginButton(
+                    icon: 'assets/images/kakao_logo.png',
+                    text: 'Kakao로 계속하기',
+                    onPressed: () {
+                      // TODO: Kakao 로그인 구현
+                    },
                   ),
                 ],
               ),
-              // 로그인 버튼 추가 부분
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // 일반 로그인 처리 로직 작성 예정
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFB88C65),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 3,
-                ),
-                child: const Text('로그인', style: TextStyle(fontSize: 16)),
-              ),
-              const SizedBox(height: 16),
-
-              const Divider(height: 32, color: Color(0xFFE0D4C3)),
-              const SizedBox(height: 12),
-
-              _SocialLoginButton(
-                label: '카카오로 로그인',
-                color: const Color(0xFFFEE500),
-                textColor: Colors.black87,
-                imagePath: 'assets/images/kakao_logo.png',
-                provider: 'kakao',
-              ),
-              const SizedBox(height: 12),
-              _SocialLoginButton(
-                label: '네이버로 로그인',
-                color: const Color(0xFF03C75A),
-                textColor: Colors.white,
-                imagePath: 'assets/images/naver_logo.png',
-                provider: 'naver',
-              ),
-              const SizedBox(height: 12),
-              _SocialLoginButton(
-                label: 'Google 계정으로 가입',
-                color: Colors.white,
-                textColor: Colors.black87,
-                imagePath: 'assets/images/google_logo.png',
-                provider: 'google',
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
-}
 
-class _SocialLoginButton extends StatelessWidget {
-  final String label;
-  final Color color;
-  final Color textColor;
-  final String imagePath;
-  final String provider;
-
-  const _SocialLoginButton({
-    required this.label,
-    required this.color,
-    required this.textColor,
-    required this.imagePath,
-    required this.provider,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildSocialLoginButton({
+    required String icon,
+    required String text,
+    required VoidCallback onPressed,
+  }) {
     return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SocialLoginWebView(provider: provider),
-          ),
-        );
-      },
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: textColor,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        shadowColor: Colors.black26,
-        elevation: 3,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Colors.grey.shade300),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(imagePath, height: 28),
+          Image.asset(
+            icon,
+            width: 24,
+            height: 24,
+          ),
           const SizedBox(width: 12),
-          Text(label, style: const TextStyle(fontSize: 16)),
+          Text(
+            text,
+            style: GoogleFonts.notoSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );

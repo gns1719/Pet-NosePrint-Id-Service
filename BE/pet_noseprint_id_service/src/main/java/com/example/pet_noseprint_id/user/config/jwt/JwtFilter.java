@@ -37,26 +37,25 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-        System.out.print("JWT Filter Start");
 
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         String token = getAccessToken(authorizationHeader);
-//        LOGGER.info("[doFilterInternal] 토큰 추출 완료. token: {}", token);
+        LOGGER.info("[doFilterInternal] 토큰 추출 완료. token: {}", token);
 
         if (token != null && jwtProvider.validateToken(token)) {
             Authentication authentication = jwtProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-//            LOGGER.info("[doFilterInternal] 토큰 유효성 검사 완료");
+            LOGGER.info("[doFilterInternal] 토큰 유효성 검사 완료");
         }
 
         filterChain.doFilter(request, response);
     }
 
     private String getAccessToken(String authorizationHeader) {
-//        LOGGER.info("[resolveToken] HTTP 헤더에서 토큰 값 추출");
+        LOGGER.info("[resolveToken] HTTP 헤더에서 토큰 값 추출");
         if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
-//            return authorizationHeader.substring(TOKEN_PREFIX.length());
-            return authorizationHeader.split(" ")[1];
+            return authorizationHeader.substring(TOKEN_PREFIX.length());
+//  이거랑 위에꺼랑 교환          return authorizationHeader.split(" ")[1];
         }
 
         return null;
