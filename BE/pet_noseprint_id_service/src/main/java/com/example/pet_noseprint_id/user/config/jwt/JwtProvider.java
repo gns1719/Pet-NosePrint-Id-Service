@@ -77,12 +77,14 @@ public class JwtProvider {
     public Authentication getAuthentication(String token) {
 
         return new UsernamePasswordAuthenticationToken(
-                getUserId(token),
+
+                getUserKey(token),
                 token
         );
     }
 
-    public Integer getUserId(String token) {
+
+    public Integer getUserKey(String token) {
         Claims claims = getClaims(token);
         return claims.get("userKey", Integer.class);
     }

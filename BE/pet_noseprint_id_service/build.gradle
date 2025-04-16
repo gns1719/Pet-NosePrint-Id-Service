@@ -27,7 +27,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.mysql:mysql-connector-j:8.3.0' // 최신 버전 사용
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.4.5'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	//Netty macOS DNS resolver 추가
+	runtimeOnly "io.netty:netty-resolver-dns-native-macos:4.1.107.Final:osx-aarch_64"
 
 	//oauth 2.0
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -35,14 +38,12 @@ dependencies {
 	//Webflux
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	//redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-
 	//thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 	implementation 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'io.lettuce:lettuce-core'
 
 	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor' // (3)
 

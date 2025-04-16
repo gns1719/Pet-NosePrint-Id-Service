@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<network-security-config>
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">10.104.1.89</domain>
+        <domain includeSubdomains="true" tools:ignore="InvalidDomain">10.101.228.213</domain>
     </domain-config>
 </network-security-config>
