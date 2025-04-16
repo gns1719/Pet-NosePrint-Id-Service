@@ -7,7 +7,10 @@ import com.example.pet_noseprint_id.pet.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/pets")
@@ -29,6 +32,12 @@ public class PetController {
     ) {
         PetInfoResponse updatedPet = petService.updatePet(petId, request);
         return ResponseEntity.ok(updatedPet);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<PetInfoResponse>> getMyPets(@AuthenticationPrincipal Integer userKey) {
+        List<PetInfoResponse> myPets = null;
+        return ResponseEntity.ok(myPets);
     }
 
 
