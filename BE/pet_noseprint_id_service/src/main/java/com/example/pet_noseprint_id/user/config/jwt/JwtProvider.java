@@ -59,16 +59,15 @@ public class JwtProvider {
     // 토큰 검증
     public boolean validateToken(String token) {
         try {
-            return Jwts.parser()
+            Claims claims = Jwts.parser()
                     .setSigningKey(accessSecretKey)
                     .build()
-                    .parseEncryptedClaims(token)
-                    .getPayload()
-                    .getExpiration()
-                    .before(new Date());
+                    .parseSignedClaims(token)
+                    .getBody();
 
+            return !claims.getExpiration().before(new Date()); // 만료되지 않았으면 true
         } catch (Exception e) {
-            LOGGER.info("[validateToken] Error: " + e.getMessage());
+            LOGGER.warning("[validateToken] Error: " + e.getMessage());
             return false;
         }
     }
@@ -76,18 +75,16 @@ public class JwtProvider {
 
     // 토큰으로부터 인증 정보 조회
     public Authentication getAuthentication(String token) {
-        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new UsernamePasswordAuthenticationToken(
                 getUserId(token),
-                token,
-                authorities
+                token
         );
     }
 
-    public String getUserId(String token) {
+    public Integer getUserId(String token) {
         Claims claims = getClaims(token);
-        return claims.get("userId", String.class);
+        return claims.get("userId", Integer.class);
     }
 
     private Claims getClaims(String token) {
