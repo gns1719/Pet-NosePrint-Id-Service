@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'main_layout.dart';
 import 'signup_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:nose_stamp/services/auth_service.dart';
+import 'package:nose_stamp/config/api_config.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,34 +16,68 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _idController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _idController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  void _handleLogin() async {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
 
-      // TODO: 실제 로그인 API 연동
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainLayout()),
+      try {
+        final response = await http.post(
+          Uri.parse(ApiConfig.loginUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'id': _idController.text,
+            'password': _passwordController.text,
+          }),
         );
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          final accessToken = data['data']['accessToken'];
+          final refreshToken = data['data']['refreshToken'];
+
+          await AuthService().saveTokens(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          );
+
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MainLayout()),
+            );
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('아이디 또는 비밀번호가 올바르지 않습니다')),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('서버 연결에 실패했습니다')),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
@@ -76,20 +114,17 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 48),
                   TextFormField(
-                    controller: _emailController,
+                    controller: _idController,
                     decoration: InputDecoration(
-                      labelText: '이메일',
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      labelText: '아이디',
+                      prefixIcon: const Icon(Icons.person_outline),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return '이메일을 입력해주세요';
-                      }
-                      if (!value.contains('@')) {
-                        return '올바른 이메일 형식이 아닙니다';
+                        return '아이디를 입력해주세요';
                       }
                       return null;
                     },
@@ -108,9 +143,6 @@ class _LoginPageState extends State<LoginPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '비밀번호를 입력해주세요';
-                      }
-                      if (value.length < 6) {
-                        return '비밀번호는 6자 이상이어야 합니다';
                       }
                       return null;
                     },

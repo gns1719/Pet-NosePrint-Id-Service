@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PetInfoResponse {
+    private Long petId;
     private String name;         // 펫 이름
     private LocalDate birth;     // 펫 생일
     private String gender;       // 펫 성별

@@ -4,14 +4,7 @@ import 'main_page.dart';
 import 'my_page.dart';
 
 class MainLayout extends StatefulWidget {
-  final String? accessToken;
-  final String? refreshToken;
-
-  const MainLayout({
-    super.key,
-    this.accessToken,
-    this.refreshToken,
-  });
+  const MainLayout({super.key});
 
   @override
   State<MainLayout> createState() => _MainLayoutState();
@@ -25,12 +18,9 @@ class _MainLayoutState extends State<MainLayout> {
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
-        children: [
-          MainPage(
-            accessToken: widget.accessToken,
-            refreshToken: widget.refreshToken,
-          ),
-          const MyPage(),
+        children: const [
+          MainPage(),
+          MyPage(),
         ],
       ),
       bottomNavigationBar: NavigationBar(

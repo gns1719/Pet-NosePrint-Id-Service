@@ -2,34 +2,272 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dog_detail_page.dart';
 import 'add_dog_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:nose_stamp/services/auth_service.dart';
+import 'package:nose_stamp/config/api_config.dart';
 
 class MainPage extends StatefulWidget {
-  final String? accessToken;
-  final String? refreshToken;
-
-  const MainPage({
-    super.key,
-    this.accessToken,
-    this.refreshToken,
-  });
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  // 임시 데이터
-  final List<Map<String, String>> _dogs = [
-    {
-      'name': '멍멍이',
-      'birthDate': '2020-01-01',
-      'breed': '골든 리트리버',
-      'imageUrl': 'assets/images/golden.jpg',
-    },
-  ];
+  List<Map<String, dynamic>> _pets = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPets();
+  }
+
+  Future<void> _fetchPets() async {
+    try {
+      final tokens = await AuthService().getTokens();
+      final accessToken = tokens['accessToken'];
+
+      if (accessToken == null) {
+        setState(() {
+          _error = '로그인이 필요합니다';
+          _isLoading = false;
+        });
+        return;
+      }
+      
+      final url = Uri.parse(ApiConfig.petListUrl);
+
+      // 디버깅용 로그 출력
+      print('📡 Sending GET request to: $url');
+      print('🔐 Access Token: $accessToken');
+      print('📝 Headers: { "Authorization": "Bearer $accessToken", "Content-Type": "application/json" }');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      // 응답 로그도 출력
+      print('✅ Response Status: ${response.statusCode}');
+      print('📦 Response Body: ${response.body}');
+
+
+      /*final response = await http.get(
+        Uri.parse(ApiConfig.petListUrl),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+      );*/
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          _pets = List<Map<String, dynamic>>.from(data['data']);
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _error = '반려동물 목록을 불러오는데 실패했습니다';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = '서버 연결에 실패했습니다';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _registerPet({
+    required String name,
+    required String birthDate,
+    required String profileUrl,
+    required String gender,
+  }) async {
+    try {
+      final tokens = await AuthService().getTokens();
+      final accessToken = tokens['accessToken'];
+
+      if (accessToken == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('로그인이 필요합니다')),
+        );
+        return;
+      }
+
+      final response = await http.post(
+        Uri.parse(ApiConfig.petRegisterUrl),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'name': name,
+          'birthDate': birthDate,
+          'profileUrl': profileUrl,
+          'gender': gender,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        _fetchPets();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('반려동물 등록에 실패했습니다')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('서버 연결에 실패했습니다')),
+      );
+    }
+  }
+
+  Future<void> _updatePet({
+    required int petId,
+    required String name,
+    required String birthDate,
+    required String profileUrl,
+    required String gender,
+  }) async {
+    try {
+      final tokens = await AuthService().getTokens();
+      final accessToken = tokens['accessToken'];
+
+      if (accessToken == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('로그인이 필요합니다')),
+        );
+        return;
+      }
+
+      final response = await http.put(
+        Uri.parse(ApiConfig.petUpdateUrl(petId)),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'name': name,
+          'birthDate': birthDate,
+          'profileUrl': profileUrl,
+          'gender': gender,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        _fetchPets();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('반려동물 정보 수정에 실패했습니다')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('서버 연결에 실패했습니다')),
+      );
+    }
+  }
+
+  Widget _buildAddPetCard() {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddDogPage()),
+          );
+          if (result != null && mounted) {
+            _registerPet(
+              name: result['name'],
+              birthDate: result['birthDate'],
+              profileUrl: result['profileUrl'],
+              gender: result['gender'],
+            );
+          }
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.add,
+                  size: 40,
+                  color: Color(0xFFB88C65),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '새로운 반려동물 등록',
+                      style: GoogleFonts.notoSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '반려동물의 정보를 등록하고 관리해보세요',
+                      style: GoogleFonts.notoSans(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right,
+                color: Colors.grey,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        body: Center(
+          child: Text(_error!),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -42,64 +280,45 @@ class _MainPageState extends State<MainPage> {
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
-      body: _dogs.isEmpty ? _buildNoDogView(context) : _buildDogList(),
-      
-    );
-  }
-
-  Widget _buildNoDogView(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.pets,
-            size: 100,
-            color: Colors.grey,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            '등록된 반려동물이 없습니다',
-            style: GoogleFonts.notoSans(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '아래 버튼을 눌러 반려동물을 등록해주세요',
-            style: GoogleFonts.notoSans(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDogList() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _dogs.length + 1,
-      itemBuilder: (context, index) {
-        if (index == _dogs.length) {
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _pets.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return _buildAddPetCard();
+          }
+          
+          final pet = _pets[index - 1];
           return Card(
             margin: const EdgeInsets.only(bottom: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             child: InkWell(
-              onTap: () async {
-                final result = await Navigator.push(
+              onTap: () {
+                Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AddDogPage()),
+                  MaterialPageRoute(
+                    builder: (context) => DogDetailPage(
+                      dogInfo: {
+                        'petId': pet['petId'].toString(),
+                        'name': pet['name'],
+                        'birthDate': pet['birthDate'],
+                        'profileUrl': pet['profileUrl'],
+                        'gender': pet['gender'],
+                      },
+                      onUpdate: (updatedInfo) {
+                        _updatePet(
+                          petId: int.parse(updatedInfo['petId']!),
+                          name: updatedInfo['name']!,
+                          birthDate: updatedInfo['birthDate']!,
+                          profileUrl: updatedInfo['profileUrl']!,
+                          gender: updatedInfo['gender']!,
+                        );
+                      },
+                    ),
+                  ),
                 );
-                if (result != null && mounted) {
-                  setState(() {
-                    _dogs.add(result as Map<String, String>);
-                  });
-                }
               },
               borderRadius: BorderRadius.circular(12),
               child: Padding(
@@ -112,11 +331,10 @@ class _MainPageState extends State<MainPage> {
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        size: 40,
-                        color: Color(0xFFB88C65),
+                        image: DecorationImage(
+                          image: NetworkImage(pet['profileUrl']),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -125,7 +343,7 @@ class _MainPageState extends State<MainPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '새로운 반려동물 등록',
+                            pet['name'],
                             style: GoogleFonts.notoSans(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -133,7 +351,15 @@ class _MainPageState extends State<MainPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '반려동물의 정보를 등록하고 관리해보세요',
+                            '생일: ${pet['birthDate']}',
+                            style: GoogleFonts.notoSans(
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '성별: ${pet['gender']}',
                             style: GoogleFonts.notoSans(
                               fontSize: 14,
                               color: Colors.grey.shade600,
@@ -151,80 +377,8 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
           );
-        }
-        final dog = _dogs[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DogDetailPage(dogInfo: dog),
-                ),
-              );
-            },
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(8),
-                      image: DecorationImage(
-                        image: AssetImage(dog['imageUrl']!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          dog['name']!,
-                          style: GoogleFonts.notoSans(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '생일: ${dog['birthDate']}',
-                          style: GoogleFonts.notoSans(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '품종: ${dog['breed']}',
-                          style: GoogleFonts.notoSans(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.chevron_right,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 }

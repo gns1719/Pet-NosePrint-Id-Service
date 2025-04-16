@@ -116,7 +116,7 @@
     <orderEntry type="library" name="Gradle: io.netty:netty-codec-http2:4.1.119.Final" level="project" />
     <orderEntry type="library" name="Gradle: io.projectreactor.netty:reactor-netty-core:1.2.4" level="project" />
     <orderEntry type="library" name="Gradle: io.netty:netty-codec-http:4.1.119.Final" level="project" />
-    <orderEntry type="library" name="Gradle: io.netty:netty-resolver-dns-native-macos:osx-x86_64:4.1.119.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: io.netty:netty-resolver-dns-native-macos:osx-x86_64:4.1.119.Final" level="project" />
     <orderEntry type="library" name="Gradle: io.netty:netty-resolver-dns:4.1.119.Final" level="project" />
     <orderEntry type="library" name="Gradle: io.netty:netty-transport-native-epoll:linux-x86_64:4.1.119.Final" level="project" />
     <orderEntry type="library" name="Gradle: org.attoparser:attoparser:2.0.7.RELEASE" level="project" />
@@ -132,6 +132,8 @@
     <orderEntry type="library" name="Gradle: io.netty:netty-codec-socks:4.1.119.Final" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: io.jsonwebtoken:jjwt-impl:0.12.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: io.jsonwebtoken:jjwt-jackson:0.12.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.netty:netty-resolver-dns-native-macos:osx-aarch_64:4.1.107.Final" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.netty:netty-resolver-dns-native-macos:osx-x86_64:4.1.107.Final" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.mariadb.jdbc:mariadb-java-client:3.4.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.github.waffle:waffle-jna:3.3.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.slf4j:jcl-over-slf4j:2.0.17" level="project" />
