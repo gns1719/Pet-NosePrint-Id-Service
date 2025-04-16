@@ -167,7 +167,7 @@ public class OAuthUserController {
     }
 
     private boolean isTestMode() {
-        return true; // 나중에 application.yml에서 설정값으로 바꿔도 OK
+        return false; // 나중에 application.yml에서 설정값으로 바꿔도 OK
     }
     // </editor-fold>
 
