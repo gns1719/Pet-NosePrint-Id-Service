@@ -33,7 +33,7 @@ public class LocalUserController {
     public ResponseEntity<ResponseDTO<Long>>  checkIdDuplicate(@RequestParam String id) {
         localUserService.isIdDuplicate(id);
 
-        ResponseDTO<Long> response = new ResponseDTO<>();ㅌ
+        ResponseDTO<Long> response = new ResponseDTO<>();
         response.setStatus(true);
         response.setMessage("사용 가능한 아이디 입니다.");
 
