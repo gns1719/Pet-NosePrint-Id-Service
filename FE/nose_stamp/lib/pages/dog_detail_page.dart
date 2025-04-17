@@ -180,7 +180,7 @@ class _DogDetailPageState extends State<DogDetailPage> {
           'gender': _gender,
         }),
       );
-      
+    
       if (response.statusCode != 200) {
         throw Exception('반려동물 정보 수정에 실패했습니다');
       }
