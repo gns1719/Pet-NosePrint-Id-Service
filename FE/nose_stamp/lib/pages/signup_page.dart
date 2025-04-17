@@ -59,14 +59,10 @@ class _SignupPageState extends State<SignupPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('사용 가능한 아이디입니다')),
           );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('이미 사용 중인 아이디입니다')),
-          );
-        }
+        } 
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('아이디 중복 확인에 실패했습니다')),
+          const SnackBar(content: Text('이미 사용 중인 아이디입니다')),
         );
       }
     } catch (e) {

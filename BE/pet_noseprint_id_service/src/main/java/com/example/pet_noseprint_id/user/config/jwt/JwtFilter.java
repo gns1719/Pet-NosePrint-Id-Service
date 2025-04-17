@@ -26,10 +26,11 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.startsWith("/users/oauth/login") || path.startsWith("/users/local/login")
-                || path.startsWith("/users/oauth/signup") || path.startsWith("/users/local/signup")
+        return path.startsWith("/users/oauth/") || path.startsWith("/users/local")
+                //|| path.startsWith("/users/oauth/signup") || path.startsWith("/users/local/signup")
                 || path.startsWith("/v3/") || path.startsWith("/docs")
-                || path.startsWith("/static/") || path.equals("/");
+                || path.startsWith("/static/") || path.equals("/")
+                ;
     }
 
     @Override
