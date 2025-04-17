@@ -77,7 +77,7 @@ public class OAuthUserController {
 
 
     // <editor-fold desc="네이버">
-    @GetMapping("/google/url")
+    @GetMapping("/naver/url")
     public RedirectView getNaverUrl() {
         String loginUrl = oAuthLoginService.getLoginUrl("naver");
         return new RedirectView(loginUrl);

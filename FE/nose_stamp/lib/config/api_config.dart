@@ -16,5 +16,5 @@ class ApiConfig {
   static String presignedUrl(String fileName) => '$baseUrl/images/presigned-url?fileName=$fileName';
 
   // Social login endpoints
-  static String socialLoginUrl(String provider) => '$baseUrl/users/oauth/$provider';
+  static String socialLoginUrl(String provider) => '$baseUrl/users/oauth/$provider/url';
 } 
