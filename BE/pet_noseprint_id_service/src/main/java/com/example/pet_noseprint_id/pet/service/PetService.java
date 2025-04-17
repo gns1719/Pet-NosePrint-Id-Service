@@ -4,7 +4,7 @@ package com.example.pet_noseprint_id.pet.service;
 import com.example.pet_noseprint_id.pet.domain.Pet;
 import com.example.pet_noseprint_id.pet.dto.AddPetRequest;
 import com.example.pet_noseprint_id.pet.dto.PetInfoResponse;
-import com.example.pet_noseprint_id.pet.dto.PetUpdateRequest;
+import com.example.pet_noseprint_id.pet.dto.PetUpdateDTO;
 import com.example.pet_noseprint_id.pet.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -69,7 +69,7 @@ public class PetService {
     }
 
 
-    public PetInfoResponse updatePet(Long petId, PetUpdateRequest request, Long userKey) {
+    public PetUpdateDTO updatePet(Long petId, PetUpdateDTO request, Long userKey) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new RuntimeException("Pet not found"));
 
@@ -80,16 +80,13 @@ public class PetService {
         pet.setName(request.getName());
         pet.setBirth(request.getBirth());
         pet.setGender(request.getGender());
-        pet.setProfile(request.getProfile());
 
         petRepository.save(pet);
 
-        return new PetInfoResponse(
-                pet.getPetId(),
+        return new PetUpdateDTO(
                 pet.getName(),
                 pet.getBirth(),
-                pet.getGender(),
-                pet.getProfile()
+                pet.getGender()
         );
     }
 

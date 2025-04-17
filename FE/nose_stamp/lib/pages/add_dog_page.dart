@@ -132,12 +132,6 @@ class _AddDogPageState extends State<AddDogPage> {
         },
       );
 
-      print(presignedUrlResponse.body);
-      print(presignedUrlResponse.statusCode);
-      print(presignedUrlResponse.headers);
-      print(presignedUrlResponse.request);
-      print("=================/presignedUrl===================");
-
       if (presignedUrlResponse.statusCode >= 200 && presignedUrlResponse.statusCode < 300) {
       }else{
         throw Exception('이미지 업로드 URL 생성에 실패했습니다. . 상태 코드: ${presignedUrlResponse.statusCode}');
@@ -156,11 +150,6 @@ class _AddDogPageState extends State<AddDogPage> {
         body: imageBytes,
       );
 
-      print(uploadResponse.body);
-      print(uploadResponse.statusCode);
-      print(uploadResponse.headers);
-      print(uploadResponse.request);
-      print("=================/upload===================");
 
       if (uploadResponse.statusCode >= 200 && uploadResponse.statusCode < 300) {
       }else{
@@ -181,11 +170,6 @@ class _AddDogPageState extends State<AddDogPage> {
         }),
       );
 
-      print(updateProfileResponse.body);
-      print(updateProfileResponse.statusCode);
-      print(updateProfileResponse.headers);
-      print(updateProfileResponse.request);
-      print("=================/updateProfile===================");
 
       if (updateProfileResponse.statusCode >= 200 && updateProfileResponse.statusCode < 300) {
       }else{

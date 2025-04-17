@@ -69,97 +69,6 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  Future<void> _registerPet({
-    required String name,
-    required String birthDate,
-    required String profileUrl,
-    required String gender,
-  }) async {
-    try {
-      final tokens = await AuthService().getTokens();
-      final accessToken = tokens['accessToken'];
-
-      if (accessToken == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('로그인이 필요합니다')),
-        );
-        return;
-      }
-
-      final response = await http.post(
-        Uri.parse(ApiConfig.petRegisterUrl),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'name': name,
-          'birthDate': birthDate,
-          'profileUrl': profileUrl,
-          'gender': gender,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        _fetchPets();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('반려동물 등록에 실패했습니다')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('서버 연결에 실패했습니다')),
-      );
-    }
-  }
-
-  Future<void> _updatePet({
-    required int petId,
-    required String name,
-    required String birthDate,
-    required String profileUrl,
-    required String gender,
-  }) async {
-    try {
-      final tokens = await AuthService().getTokens();
-      final accessToken = tokens['accessToken'];
-
-      if (accessToken == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('로그인이 필요합니다')),
-        );
-        return;
-      }
-
-      final response = await http.put(
-        Uri.parse(ApiConfig.petUpdateUrl(petId)),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'name': name,
-          'birthDate': birthDate,
-          'profileUrl': profileUrl,
-          'gender': gender,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        _fetchPets();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('반려동물 정보 수정에 실패했습니다')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('서버 연결에 실패했습니다')),
-      );
-    }
-  }
-
   Widget _buildAddPetCard() {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -168,18 +77,14 @@ class _MainPageState extends State<MainPage> {
       ),
       child: InkWell(
         onTap: () async {
-          final result = await Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddDogPage()),
-          );
-          if (result != null && mounted) {
-            _registerPet(
-              name: result['name'],
-              birthDate: result['birthDate'],
-              profileUrl: result['profileUrl'],
-              gender: result['gender'],
-            );
-          }
+          ).then((_) {
+            if (mounted) {
+              _fetchPets();
+            }
+          });
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
@@ -287,18 +192,11 @@ class _MainPageState extends State<MainPage> {
                           'profileUrl': pet['profile'],
                           'gender': pet['gender'],
                         },
-                        onUpdate: (updatedInfo) {
-                          _updatePet(
-                            petId: int.parse(updatedInfo['petId']!),
-                            name: updatedInfo['name']!,
-                            birthDate: updatedInfo['birthDate']!,
-                            profileUrl: updatedInfo['profileUrl']!,
-                            gender: updatedInfo['gender']!,
-                          );
-                        },
                       ),
                     ),
-                  );
+                  ).then((_) {
+                    _fetchPets();
+                  });
                 },
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
@@ -314,7 +212,7 @@ class _MainPageState extends State<MainPage> {
                             color: Colors.grey.shade200,
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(
-                              image: NetworkImage(pet['profile']),
+                              image: NetworkImage('${pet['profile']}?timestamp=${DateTime.now().millisecondsSinceEpoch}'),
                               fit: BoxFit.cover,
                             ),
                           ),
