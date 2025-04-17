@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'pages/login_page.dart';
+import 'pages/onboarding_page.dart';
+import 'pages/main_layout.dart';
 
 void main() {
   runApp(const KoDoJangApp());
@@ -18,7 +19,10 @@ class KoDoJangApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB88C65)),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      home: const OnboardingPage(),
+      routes: {
+        '/main': (context) => const MainLayout(),
+      },
     );
   }
 }

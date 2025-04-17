@@ -17,9 +17,9 @@ import java.time.LocalDate;
 public class Pet {
     @Id
     private Long petId;         //펫 아이디
-    private Long ownerId;        //유저 아이디
+    private Long userKey;        //유저 아이디
     private String name;        //펫 이름
     private LocalDate birth;    //펫 생일
-    private String gender;      //펫 성별
     private String profile;     //펫 프로필 사진(url)
+    private String gender;      //펫 성별
 }

@@ -61,7 +61,7 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
         ),
       )
       ..loadRequest(
-        Uri.parse('http://10.104.1.89:8080/users/oauth/${widget.provider}'),
+        Uri.parse('http://localhost:8080/users/oauth/${widget.provider}'),
       );
   }
 
