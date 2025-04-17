@@ -18,6 +18,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -91,5 +93,18 @@ public class GoogleService {
         log.info("[Google Service] Picture ---> {}", userInfo.getPicture());
 
         return userInfo;
+    }
+
+    public String getUrl() {
+        String state = UUID.randomUUID().toString(); // CSRF 방지용
+        String scope = "email%20profile";
+
+        return "https://accounts.google.com/o/oauth2/v2/auth"
+                + "?client_id=" + clientId
+                + "&redirect_uri=" + redirectUri
+                + "&response_type=code"
+                + "&scope=" + scope
+                + "&access_type=offline"
+                + "&state=" + state;
     }
 }

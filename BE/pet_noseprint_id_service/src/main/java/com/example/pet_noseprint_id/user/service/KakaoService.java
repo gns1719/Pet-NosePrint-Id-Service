@@ -14,17 +14,19 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
 public class KakaoService {
 
     private String clientId;
+    private String redirectUri;
     private final String KAUTH_TOKEN_URL_HOST;
     private final String KAUTH_USER_URL_HOST;
 
     @Autowired
-    public KakaoService(@Value("${kakao.client_id}") String clientId) {
+    public KakaoService(@Value("${kakao.client_id}") String clientId,
+                        @Value("${kakao.redirect_uri}")String redirectUri) {
         this.clientId = clientId;
+        this.redirectUri = redirectUri;
         KAUTH_TOKEN_URL_HOST ="https://kauth.kakao.com";
         KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
     }
@@ -88,4 +90,13 @@ public class KakaoService {
         return userInfo;
     }
 
+    public String getUrl() {
+        String baseUrl = "https://kauth.kakao.com/oauth/authorize";
+        String responseType = "code";
+
+        return baseUrl + "?" +
+                "client_id=" + clientId + "&" +
+                "redirect_uri=" + redirectUri + "&" +
+                "response_type=" + responseType;
+    }
 }

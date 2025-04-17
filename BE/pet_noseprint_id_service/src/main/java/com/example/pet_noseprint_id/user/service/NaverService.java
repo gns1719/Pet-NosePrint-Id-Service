@@ -15,20 +15,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 public class NaverService {
 
     private String clientId;
     private String clientSecret;
+    private String redirectUri;
     private final String NAUTH_TOKEN_URL_HOST;
     private final String NAUTH_USER_URL_HOST;
 
     @Autowired
     public NaverService(@Value("${naver.client_id}") String clientId,
-                        @Value("${naver.client_secret}")String clientSecret) {
+                        @Value("${naver.client_secret}")String clientSecret,
+                        @Value("${naver.redirect_uri}") String redirectUri) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
+        this.redirectUri = redirectUri;
         NAUTH_TOKEN_URL_HOST ="https://nid.naver.com/oauth2.0";
         NAUTH_USER_URL_HOST = "https://openapi.naver.com/v1/nid/me";
     }
@@ -95,4 +100,13 @@ public class NaverService {
         return userInfo;
     }
 
+    public String getUrl() {
+        String state = UUID.randomUUID().toString(); // CSRF 방지용
+
+        return "https://nid.naver.com/oauth2.0/authorize"
+                + "?response_type=code"
+                + "&client_id=" + clientId
+                + "&redirect_uri=" + redirectUri
+                + "&state=" + state;
+    }
 }
