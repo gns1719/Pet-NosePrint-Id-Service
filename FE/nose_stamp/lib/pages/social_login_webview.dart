@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'main_page.dart';
+import 'package:nose_stamp/config/api_config.dart';
+import 'package:nose_stamp/services/auth_service.dart';
+import 'package:nose_stamp/pages/main_layout.dart';
 
 class SocialLoginWebView extends StatefulWidget {
   final String provider;
@@ -42,15 +44,19 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
                 final accessToken = data['accessToken'];
                 final refreshToken = data['refreshToken'];
 
+                // 토큰 저장
+                await AuthService().saveTokens(
+                  accessToken: accessToken,
+                  refreshToken: refreshToken,
+                );
+
                 if (!mounted) return;
 
+                // MainLayout으로 이동
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MainPage(
-                      accessToken: accessToken,
-                      refreshToken: refreshToken,
-                    ),
+                    builder: (context) => const MainLayout(),
                   ),
                 );
               }
@@ -60,16 +66,18 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
           },
         ),
       )
+      
       ..loadRequest(
-        Uri.parse('http://localhost:8080/users/oauth/${widget.provider}'),
+        Uri.parse(ApiConfig.socialLoginUrl(widget.provider)),
       );
+      
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.provider} 로그인 중'),
+        title: Text('${widget.provider} 로그인'),
       ),
       body: WebViewWidget(controller: _controller),
     );

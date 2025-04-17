@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:nose_stamp/services/auth_service.dart';
 import 'package:nose_stamp/config/api_config.dart';
+import 'package:nose_stamp/pages/social_login_webview.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -210,7 +211,12 @@ class _LoginPageState extends State<LoginPage> {
                     icon: 'assets/images/google_logo.png',
                     text: 'Google로 계속하기',
                     onPressed: () {
-                      // TODO: Google 로그인 구현
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SocialLoginWebView(provider: 'google'),
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(height: 12),
@@ -218,7 +224,12 @@ class _LoginPageState extends State<LoginPage> {
                     icon: 'assets/images/naver_logo.png',
                     text: 'Naver로 계속하기',
                     onPressed: () {
-                      // TODO: Naver 로그인 구현
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SocialLoginWebView(provider: 'naver'),
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(height: 12),
@@ -226,7 +237,12 @@ class _LoginPageState extends State<LoginPage> {
                     icon: 'assets/images/kakao_logo.png',
                     text: 'Kakao로 계속하기',
                     onPressed: () {
-                      // TODO: Kakao 로그인 구현
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SocialLoginWebView(provider: 'kakao'),
+                        ),
+                      );
                     },
                   ),
                 ],
