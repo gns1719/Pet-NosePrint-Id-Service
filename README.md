@@ -109,7 +109,9 @@
 <Br>
 
 + [정형준](https://github.com/Junghyeongjun) / Ai-engineer
-
+  - 반려동물 비문 Dataset Labeling<Br>
+  - 반려동물 비문 탐지를 위한 YOLO11n 학습 구현<Br>
+  - 비문 특징 벡터 추출 및 유사도 비교 모델 구현
 <Br>
 
 
