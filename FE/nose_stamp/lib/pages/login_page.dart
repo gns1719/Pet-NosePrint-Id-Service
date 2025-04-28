@@ -43,7 +43,6 @@ class _LoginPageState extends State<LoginPage> {
             'password': _passwordController.text,
           }),
         );
-
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
           final accessToken = data['data']['accessToken'];
