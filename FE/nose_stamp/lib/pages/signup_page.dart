@@ -61,8 +61,18 @@ class _SignupPageState extends State<SignupPage> {
           );
         } 
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('이미 사용 중인 아이디입니다')),
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('알림'),
+            content: const Text('이미 사용 중인 아이디입니다.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('확인'),
+              ),
+            ],
+          ),
         );
       }
     } catch (e) {

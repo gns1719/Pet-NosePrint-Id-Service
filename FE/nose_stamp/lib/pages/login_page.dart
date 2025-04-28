@@ -43,7 +43,6 @@ class _LoginPageState extends State<LoginPage> {
             'password': _passwordController.text,
           }),
         );
-
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
           final accessToken = data['data']['accessToken'];
@@ -231,6 +230,8 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       );
                     },
+                    backgroundColor: const Color(0xFF03C75A),
+                    textColor: Colors.white,
                   ),
                   const SizedBox(height: 12),
                   _buildSocialLoginButton(
@@ -244,6 +245,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       );
                     },
+                    backgroundColor: const Color(0xFFFEE500),
                   ),
                 ],
               ),
@@ -258,12 +260,14 @@ class _LoginPageState extends State<LoginPage> {
     required String icon,
     required String text,
     required VoidCallback onPressed,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.black,
   }) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
         padding: const EdgeInsets.symmetric(vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
