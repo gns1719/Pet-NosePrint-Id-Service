@@ -84,9 +84,9 @@ public class JwtProvider {
     }
 
 
-    public Integer getUserKey(String token) {
+    public Long getUserKey(String token) {
         Claims claims = getClaims(token);
-        return claims.get("userKey", Integer.class);
+        return claims.get("userKey", Long.class);
     }
 
     private Claims getClaims(String token) {

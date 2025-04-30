@@ -40,7 +40,6 @@ public class OAuthUserController {
         LoginUserResDTO loginResponse = oAuthLoginService.handleKakao(code);
 
 
-
         ResponseDTO<LoginUserResDTO> response = new ResponseDTO<>();
         response.setStatus(true);
         response.setMessage("User login successful.");
