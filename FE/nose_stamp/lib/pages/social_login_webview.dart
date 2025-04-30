@@ -30,11 +30,6 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
             debugPrint("🔁 이동 URL: ${request.url}");
 
             final uri = Uri.parse(request.url);
-            if (uri.path.contains("/users/oauth/kakao/callback")) {
-              debugPrint("🎯 콜백 URL 감지됨. 서버에 요청 보내는 중...");
-              // 여기에 필요한 추가 처리가 있으면 넣을 수 있어
-              // ex. query 파라미터 수동 추출 등
-            }
 
             return NavigationDecision.navigate;
           },

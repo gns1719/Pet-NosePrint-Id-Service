@@ -101,6 +101,7 @@ class _AddDogPageState extends State<AddDogPage> {
       }
 
       // 1. 기본 정보 등록
+      
       final registerResponse = await http.post(
         Uri.parse(ApiConfig.petRegisterUrl),
         headers: {

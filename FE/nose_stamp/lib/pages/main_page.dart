@@ -37,8 +37,6 @@ class _MainPageState extends State<MainPage> {
         });
         return;
       }
-      
-      final url = Uri.parse(ApiConfig.petListUrl);
 
 
       final response = await http.get(
@@ -50,18 +48,29 @@ class _MainPageState extends State<MainPage> {
       );
       
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+      final data = json.decode(response.body);
+
+      if (data == null || data.isEmpty) {
         setState(() {
-          _pets = List<Map<String, dynamic>>.from(data['data']);
+          _pets = [];
           _isLoading = false;
         });
-      } else {
+        print("등록된 펫이 없습니다.");
+        return; // 여기서 종료
+      }
+
+      setState(() {
+        _pets = List<Map<String, dynamic>>.from(data['data']);
+        _isLoading = false;
+      });
+      }else {
         setState(() {
           _error = '반려동물 목록을 불러오는데 실패했습니다';
           _isLoading = false;
         });
       }
     } catch (e) {
+      print(e);
       setState(() {
         _error = '서버 연결에 실패했습니다';
         _isLoading = false;

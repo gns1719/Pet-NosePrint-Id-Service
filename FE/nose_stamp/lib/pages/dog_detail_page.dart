@@ -105,7 +105,7 @@ class _DogDetailPageState extends State<DogDetailPage> {
 
       // 1. Presigned URL 요청
       final presignedUrlResponse = await http.get(
-        Uri.parse('${ApiConfig.presignedUrl(widget.dogInfo['petId']!)}'),
+        Uri.parse(ApiConfig.presignedUrl(widget.dogInfo['petId']!)),
         headers: {
           'Authorization': 'Bearer $accessToken',
         },
