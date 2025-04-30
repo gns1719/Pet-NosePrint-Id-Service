@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
@@ -28,7 +29,13 @@ public class RedisConfig {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
-        return new LettuceConnectionFactory(host, port);   //Lettuce vs Jedis 중 lettuce를 선택. 더 좋음.
+
+
+        // 2. TLS 옵션 포함한 Lettuce 설정
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+                .useSsl() // TLS 연결 사용
+                .build();
+        return new LettuceConnectionFactory(redisStandaloneConfiguration,clientConfig);   //Lettuce vs Jedis 중 lettuce를 선택. 더 좋음.
     }
 
 

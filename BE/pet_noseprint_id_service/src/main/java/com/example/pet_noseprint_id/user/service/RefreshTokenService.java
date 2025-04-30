@@ -17,8 +17,8 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public void removeRefreshToken(String accessToken) {
-        refreshTokenRepository.findByAccessToken(accessToken)
+    public void removeRefreshToken(String userKey) {
+        refreshTokenRepository.findById(userKey)
                 .ifPresent(refreshToken -> refreshTokenRepository.delete(refreshToken));
     }
 

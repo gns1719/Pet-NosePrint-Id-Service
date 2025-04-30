@@ -25,9 +25,17 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	//Database
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.session:spring-session-data-redis' // session redis
 	implementation 'com.mysql:mysql-connector-j:8.3.0' // 최신 버전 사용
+
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.data:spring-data-jdbc'
 
 	//Netty macOS DNS resolver 추가
 	runtimeOnly "io.netty:netty-resolver-dns-native-macos:4.1.107.Final:osx-aarch_64"
@@ -40,6 +48,7 @@ dependencies {
 
 	//thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 
 	implementation 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'

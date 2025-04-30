@@ -2,12 +2,15 @@ package com.example.pet_noseprint_id.user.service;
 
 import com.example.pet_noseprint_id.user.config.jwt.JwtProvider;
 import com.example.pet_noseprint_id.user.domain.LocalUser;
-import com.example.pet_noseprint_id.user.dto.LoginUserReqDTO;
-import com.example.pet_noseprint_id.user.dto.LoginUserResDTO;
+import com.example.pet_noseprint_id.user.dto.*;
 import com.example.pet_noseprint_id.user.repository.LocalUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +19,7 @@ public class LocalUserService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final JwtProvider jwtProvider;
+    private final UserService userService;
 
     private Long accessExpireTimeMs = 60 * 60 * 250L;  // 15분
     private Long refreshExpireTimeMs = 14 * 24 * 60 * 60 * 1000L;  // 14일
@@ -59,5 +63,7 @@ public class LocalUserService {
                 .build();
 
     }
+
+
 
 }

@@ -2,18 +2,13 @@ package com.example.pet_noseprint_id.user.controller;
 
 import com.example.pet_noseprint_id.user.domain.LocalUser;
 import com.example.pet_noseprint_id.user.domain.User;
-import com.example.pet_noseprint_id.user.dto.CreateAccessTokenReqDTO;
-import com.example.pet_noseprint_id.user.dto.LoginUserReqDTO;
-import com.example.pet_noseprint_id.user.dto.LoginUserResDTO;
-import com.example.pet_noseprint_id.user.dto.ResponseDTO;
+import com.example.pet_noseprint_id.user.dto.*;
 import com.example.pet_noseprint_id.user.service.LocalUserService;
 import com.example.pet_noseprint_id.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +30,7 @@ public class LocalUserController {
 
         ResponseDTO<Long> response = new ResponseDTO<>();
         response.setStatus(true);
-        response.setMessage("User with id already exists");
+        response.setMessage("이미 사용중인 ID 입니다.");
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -78,5 +73,19 @@ public class LocalUserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
+
+    // 비밀번호 찾기
+    @PostMapping("/find-pw")
+    public ResponseEntity<ResponseDTO<?>> findPw(@RequestBody FindPasswordReqDTO request) {
+        userService.findPassword(request.getUserId());
+
+        ResponseDTO<LoginUserResDTO> response = new ResponseDTO<>();
+        response.setStatus(true);
+        response.setMessage("임시 비밀번호가 이메일로 전송되었습니다.");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
 
 }
