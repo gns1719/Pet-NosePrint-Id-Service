@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'main_page.dart';
+import 'package:nose_stamp/config/api_config.dart';
+import 'package:nose_stamp/services/auth_service.dart';
+import 'package:nose_stamp/pages/main_layout.dart';
 
 class SocialLoginWebView extends StatefulWidget {
   final String provider;
@@ -23,6 +25,19 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onNavigationRequest: (request) {
+            // 여기서 서버 콜백 URL 감지 및 디버그 로그 출력
+            debugPrint("🔁 이동 URL: ${request.url}");
+
+            final uri = Uri.parse(request.url);
+            if (uri.path.contains("/users/oauth/kakao/callback")) {
+              debugPrint("🎯 콜백 URL 감지됨. 서버에 요청 보내는 중...");
+              // 여기에 필요한 추가 처리가 있으면 넣을 수 있어
+              // ex. query 파라미터 수동 추출 등
+            }
+
+            return NavigationDecision.navigate;
+          },
           onPageFinished: (url) async {
             try {
               final raw = await _controller.runJavaScriptReturningResult("""
@@ -42,26 +57,30 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
                 final accessToken = data['accessToken'];
                 final refreshToken = data['refreshToken'];
 
+                // 토큰 저장
+                await AuthService().saveTokens(
+                  accessToken: accessToken,
+                  refreshToken: refreshToken,
+                );
+
                 if (!mounted) return;
 
+                // 메인 화면으로 이동
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MainPage(
-                      accessToken: accessToken,
-                      refreshToken: refreshToken,
-                    ),
+                    builder: (context) => const MainLayout(),
                   ),
                 );
               }
             } catch (e) {
-              debugPrint("로그인 응답 파싱 실패: $e");
+              debugPrint("❌ 로그인 응답 파싱 실패: $e");
             }
           },
         ),
       )
       ..loadRequest(
-        Uri.parse('http://localhost:8080/users/oauth/${widget.provider}'),
+        Uri.parse(ApiConfig.socialLoginUrl(widget.provider)),
       );
   }
 
@@ -69,7 +88,7 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.provider} 로그인 중'),
+        title: Text('${widget.provider} 로그인'),
       ),
       body: WebViewWidget(controller: _controller),
     );

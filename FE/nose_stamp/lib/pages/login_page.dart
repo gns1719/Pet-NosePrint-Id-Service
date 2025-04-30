@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:nose_stamp/services/auth_service.dart';
 import 'package:nose_stamp/config/api_config.dart';
+import 'package:nose_stamp/pages/social_login_webview.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -42,7 +43,6 @@ class _LoginPageState extends State<LoginPage> {
             'password': _passwordController.text,
           }),
         );
-
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
           final accessToken = data['data']['accessToken'];
@@ -210,7 +210,12 @@ class _LoginPageState extends State<LoginPage> {
                     icon: 'assets/images/google_logo.png',
                     text: 'Google로 계속하기',
                     onPressed: () {
-                      // TODO: Google 로그인 구현
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SocialLoginWebView(provider: 'google'),
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(height: 12),
@@ -218,16 +223,29 @@ class _LoginPageState extends State<LoginPage> {
                     icon: 'assets/images/naver_logo.png',
                     text: 'Naver로 계속하기',
                     onPressed: () {
-                      // TODO: Naver 로그인 구현
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SocialLoginWebView(provider: 'naver'),
+                        ),
+                      );
                     },
+                    backgroundColor: const Color(0xFF03C75A),
+                    textColor: Colors.white,
                   ),
                   const SizedBox(height: 12),
                   _buildSocialLoginButton(
                     icon: 'assets/images/kakao_logo.png',
                     text: 'Kakao로 계속하기',
                     onPressed: () {
-                      // TODO: Kakao 로그인 구현
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SocialLoginWebView(provider: 'kakao'),
+                        ),
+                      );
                     },
+                    backgroundColor: const Color(0xFFFEE500),
                   ),
                 ],
               ),
@@ -242,12 +260,14 @@ class _LoginPageState extends State<LoginPage> {
     required String icon,
     required String text,
     required VoidCallback onPressed,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.black,
   }) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
         padding: const EdgeInsets.symmetric(vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

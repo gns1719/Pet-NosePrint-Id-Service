@@ -46,14 +46,10 @@ class _SignupPageState extends State<SignupPage> {
     });
 
     try {
-      final response = await http.post(
-        Uri.parse(ApiConfig.checkIdUrl),
+      final response = await http.get(
+        Uri.parse('${ApiConfig.checkIdUrl}?id=${_idController.text}'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'id': _idController.text,
-        }),
       );
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['status'] == true) {
@@ -63,14 +59,20 @@ class _SignupPageState extends State<SignupPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('사용 가능한 아이디입니다')),
           );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('이미 사용 중인 아이디입니다')),
-          );
-        }
+        } 
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('아이디 중복 확인에 실패했습니다')),
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('알림'),
+            content: const Text('이미 사용 중인 아이디입니다.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('확인'),
+              ),
+            ],
+          ),
         );
       }
     } catch (e) {
@@ -104,7 +106,7 @@ class _SignupPageState extends State<SignupPage> {
           body: json.encode({
             'id': _idController.text,
             'name': _nameController.text,
-            'phone': _phoneController.text,
+            'phoneNumber': _phoneController.text,
             'email': _emailController.text,
             'password': _passwordController.text,
           }),

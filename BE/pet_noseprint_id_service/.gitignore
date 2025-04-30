@@ -1,6 +1,10 @@
 # 프로젝트 설명 파일 (필요에 따라 유지 가능)
 HELP.md
 
+# macOS system files
+.DS_Store
+
+
 # Gradle 관련 파일 & 빌드 폴더 무시
 .gradle/
 build/

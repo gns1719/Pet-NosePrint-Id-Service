@@ -8,9 +8,8 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PetUpdateRequest {
+public class PetUpdateDTO {
     private String name;        // 펫 이름
     private LocalDate birth;    // 펫 생일
     private String gender;      // 펫 성별
-    private String profile;     // 펫 프로필 사진 URL
 }

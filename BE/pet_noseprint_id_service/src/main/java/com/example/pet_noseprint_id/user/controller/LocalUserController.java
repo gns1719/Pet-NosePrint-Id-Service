@@ -30,7 +30,8 @@ public class LocalUserController {
 
         ResponseDTO<Long> response = new ResponseDTO<>();
         response.setStatus(true);
-        response.setMessage("이미 사용중인 ID 입니다.");
+
+        response.setMessage("사용 가능한 아이디 입니다.");
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
