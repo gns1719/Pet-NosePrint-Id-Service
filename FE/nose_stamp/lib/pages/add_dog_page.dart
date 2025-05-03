@@ -101,6 +101,7 @@ class _AddDogPageState extends State<AddDogPage> {
       }
 
       // 1. 기본 정보 등록
+      
       final registerResponse = await http.post(
         Uri.parse(ApiConfig.petRegisterUrl),
         headers: {
@@ -157,6 +158,8 @@ class _AddDogPageState extends State<AddDogPage> {
       }
 
       final imageUrl = presignedUrl.split('?').first;
+      final int timestamp = DateTime.now().millisecondsSinceEpoch;
+      final String imageUrlWithTimestamp = "$imageUrl?ts=$timestamp";
 
       // 4. 프로필 URL 업데이트
       final updateProfileResponse = await http.patch(
@@ -166,7 +169,7 @@ class _AddDogPageState extends State<AddDogPage> {
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'profile': imageUrl,
+          'profile': imageUrlWithTimestamp,
         }),
       );
 

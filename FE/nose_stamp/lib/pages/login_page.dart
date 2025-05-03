@@ -43,6 +43,7 @@ class _LoginPageState extends State<LoginPage> {
             'password': _passwordController.text,
           }),
         );
+
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
           final accessToken = data['data']['accessToken'];
@@ -54,9 +55,10 @@ class _LoginPageState extends State<LoginPage> {
           );
 
           if (mounted) {
-            Navigator.pushReplacement(
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const MainLayout()),
+              (route) => false,
             );
           }
         } else {
@@ -79,6 +81,64 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
       }
+    }
+  }
+
+  void _showPasswordResetDialog() {
+  final idController = TextEditingController();
+  final outerContext = context; // ✅ 안전한 context 저장
+
+  showDialog(
+    context: outerContext,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('비밀번호 재설정'),
+      content: TextField(
+        controller: idController,
+        decoration: const InputDecoration(labelText: '아이디'),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext),
+          child: const Text('취소'),
+        ),
+        TextButton(
+          onPressed: () async {
+            final userId = idController.text.trim();
+            Navigator.pop(dialogContext); // Dialog 먼저 닫기
+
+            if (userId.isNotEmpty) {
+              try {
+                await _requestPasswordReset(userId);
+
+                if (!mounted) return;
+                ScaffoldMessenger.of(outerContext).showSnackBar(
+                  const SnackBar(content: Text('임시 비밀번호가 전송되었습니다.')),
+                );
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(outerContext).showSnackBar(
+                  SnackBar(content: Text('오류: $e')),
+                );
+              }
+            }
+          },
+          child: const Text('전송'),
+        ),
+      ],
+    ),
+  );
+}
+
+
+  Future<void> _requestPasswordReset(String userId) async {
+    final response = await http.post(
+      Uri.parse(ApiConfig.passwordResetUrl), // ⚠️ 실제 서버 URL로 교체
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'userId': userId}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('서버 오류: ${response.statusCode} - ${response.body}');
     }
   }
 
@@ -167,42 +227,49 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                   ),
                   const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignupPage()),
-                      );
-                    },
-                    child: Text(
-                      '계정이 없으신가요? 회원가입',
-                      style: GoogleFonts.notoSans(
-                        color: Colors.blue,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SignupPage()),
+                          );
+                        },
+                        child: Text(
+                          '회원가입',
+                          style: GoogleFonts.notoSans(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
                       ),
-                    ),
+                      const Text(' / '),
+                      GestureDetector(
+                        onTap: _showPasswordResetDialog,
+                        child: Text(
+                          '비밀번호 찾기',
+                          style: GoogleFonts.notoSans(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 32),
                   Row(
                     children: [
-                      Expanded(
-                        child: Divider(
-                          color: Colors.grey.shade300,
-                        ),
-                      ),
+                      Expanded(child: Divider(color: Colors.grey.shade300)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           '또는',
-                          style: GoogleFonts.notoSans(
-                            color: Colors.grey.shade600,
-                          ),
+                          style: GoogleFonts.notoSans(color: Colors.grey.shade600),
                         ),
                       ),
-                      Expanded(
-                        child: Divider(
-                          color: Colors.grey.shade300,
-                        ),
-                      ),
+                      Expanded(child: Divider(color: Colors.grey.shade300)),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -222,6 +289,8 @@ class _LoginPageState extends State<LoginPage> {
                   _buildSocialLoginButton(
                     icon: 'assets/images/naver_logo.png',
                     text: 'Naver로 계속하기',
+                    backgroundColor: const Color(0xFF03C75A),
+                    textColor: Colors.white,
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -230,13 +299,12 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       );
                     },
-                    backgroundColor: const Color(0xFF03C75A),
-                    textColor: Colors.white,
                   ),
                   const SizedBox(height: 12),
                   _buildSocialLoginButton(
                     icon: 'assets/images/kakao_logo.png',
                     text: 'Kakao로 계속하기',
+                    backgroundColor: const Color(0xFFFEE500),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -245,7 +313,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       );
                     },
-                    backgroundColor: const Color(0xFFFEE500),
                   ),
                 ],
               ),
@@ -277,18 +344,11 @@ class _LoginPageState extends State<LoginPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            icon,
-            width: 24,
-            height: 24,
-          ),
+          Image.asset(icon, width: 24, height: 24),
           const SizedBox(width: 12),
           Text(
             text,
-            style: GoogleFonts.notoSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
+            style: GoogleFonts.notoSans(fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ],
       ),

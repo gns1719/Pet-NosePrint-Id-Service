@@ -105,7 +105,7 @@ class _DogDetailPageState extends State<DogDetailPage> {
 
       // 1. Presigned URL 요청
       final presignedUrlResponse = await http.get(
-        Uri.parse('${ApiConfig.presignedUrl(widget.dogInfo['petId']!)}'),
+        Uri.parse(ApiConfig.presignedUrl(widget.dogInfo['petId']!)),
         headers: {
           'Authorization': 'Bearer $accessToken',
         },
@@ -131,13 +131,36 @@ class _DogDetailPageState extends State<DogDetailPage> {
         throw Exception('이미지 업로드에 실패했습니다');
       }
 
-      // 업로드된 이미지의 URL 저장
-      final imageUrl = presignedUrl.split('?').first;
+      // 3. 타임스탬프 포함한 최종 이미지 URL 생성
+      final String baseImageUrl = presignedUrl.split('?').first;
+      final int timestamp = DateTime.now().millisecondsSinceEpoch;
+      final String imageUrlWithTimestamp = '$baseImageUrl?ts=$timestamp';
+
+      // 4. 서버에 PATCH 요청으로 이미지 URL 업데이트
+      final petIdRaw = widget.dogInfo['petId'];
+      final int petId = int.tryParse(petIdRaw.toString()) ?? (throw Exception("petId 형변환 실패"));
+
+
+      final updateResponse = await http.patch(
+        Uri.parse(ApiConfig.petProfileUrl(petId)),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'profile': imageUrlWithTimestamp,
+        }),
+      );
+
+      if (updateResponse.statusCode != 200) {
+        throw Exception('프로필 이미지 URL 업데이트 실패');
+      }
       setState(() {
-        _profileUrlController.text = '$imageUrl?timestamp=${DateTime.now().millisecondsSinceEpoch}';
+        _profileUrlController.text = imageUrlWithTimestamp;
       });
     } catch (e) {
       if (mounted) {
+        print(e.toString());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString())),
         );
@@ -283,8 +306,7 @@ class _DogDetailPageState extends State<DogDetailPage> {
                                   child: InteractiveViewer(
                                     minScale: 0.5,
                                     maxScale: 4.0,
-                                    child: Image.network(
-                                      '${_profileUrlController.text}?timestamp=${DateTime.now().millisecondsSinceEpoch}',
+                                    child: Image.network(_profileUrlController.text,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -303,7 +325,7 @@ class _DogDetailPageState extends State<DogDetailPage> {
                                 image: DecorationImage(
                                   image: _selectedImage != null
                                       ? FileImage(_selectedImage!) as ImageProvider
-                                      : NetworkImage('${_profileUrlController.text}?timestamp=${DateTime.now().millisecondsSinceEpoch}'),
+                                      : NetworkImage(_profileUrlController.text),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -446,10 +468,3 @@ class _DogDetailPageState extends State<DogDetailPage> {
     );
   }
 }
-
-class PetImage {
-  final String baseUrl;
-  String get displayUrl => '$baseUrl?timestamp=${DateTime.now().millisecondsSinceEpoch}';
-  
-  PetImage(this.baseUrl);
-} 
