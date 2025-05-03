@@ -61,12 +61,13 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
                 if (!mounted) return;
 
                 // 메인 화면으로 이동
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MainLayout(),
-                  ),
-                );
+                Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MainLayout(),
+                ),
+                (route) => false, // 스택에 남아있는 모든 페이지 제거
+              );
               }
             } catch (e) {
               debugPrint("❌ 로그인 응답 파싱 실패: $e");

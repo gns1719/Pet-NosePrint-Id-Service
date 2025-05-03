@@ -221,7 +221,7 @@ class _MainPageState extends State<MainPage> {
                             color: Colors.grey.shade200,
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(
-                              image: NetworkImage('${pet['profile']}?timestamp=${DateTime.now().millisecondsSinceEpoch}'),
+                              image: NetworkImage(pet['profile']),
                               fit: BoxFit.cover,
                             ),
                           ),
