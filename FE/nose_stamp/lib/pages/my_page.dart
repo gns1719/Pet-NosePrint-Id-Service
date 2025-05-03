@@ -59,10 +59,10 @@ class _MyPageState extends State<MyPage> {
     final accessToken = await getAccessTokenOrThrow();
     final body = jsonEncode({
       'email': emailController.text.trim(),
-      'phone': phoneController.text.trim(),
+      'phoneNumber': phoneController.text.trim(),
     });
 
-    final response = await http.patch(
+    final response = await http.post(
       Uri.parse(ApiConfig.updateUserUrl),
       headers: {
         'Authorization': 'Bearer $accessToken',
@@ -180,7 +180,7 @@ class _MyPageState extends State<MyPage> {
       'newPassword': newPw,
     });
 
-    final response = await http.patch(
+    final response = await http.post(
       Uri.parse(ApiConfig.changePasswordUrl), // API 주소 맞게 수정
       headers: {
         'Authorization': 'Bearer $accessToken',

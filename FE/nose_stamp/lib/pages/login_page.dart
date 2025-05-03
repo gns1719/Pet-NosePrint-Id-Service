@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _requestPasswordReset(String userId) async {
     final response = await http.post(
-      Uri.parse(ApiConfig.passwordResetUrl), // ⚠️ 실제 서버 URL로 교체
+      Uri.parse(ApiConfig.passwordResetUrl),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'userId': userId}),
     );
