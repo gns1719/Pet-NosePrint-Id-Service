@@ -43,12 +43,13 @@ class _MyPageState extends State<MyPage> {
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final body = jsonDecode(response.body);
+      final data = body['data'];
       setState(() {
-        emailController.text = data['email'] ?? '';
-        phoneController.text = data['phoneNumber'] ?? '';
-        nameController.text = data['name'] ?? '';
-        userType = data['loginType'] ?? '';
+        nameController.text = data['name'];
+        phoneController.text = data['phoneNumber'];
+        userType = data['loginType'];
+        emailController.text = data['email'];
       });
     } else {
       throw Exception('사용자 정보 불러오기 실패');
@@ -211,14 +212,12 @@ class _MyPageState extends State<MyPage> {
                   _buildInfoField(
                     '연락처',
                     phoneController.text,
-                    placeholder: '핸드폰 번호를 추가해주세요',
                     actionLabel: '변경',
                     onEdit: () => showEditDialog('연락처', phoneController),
                   ),
                   _buildInfoField(
                     '이메일',
                     emailController.text,
-                    placeholder: '이메일을 추가해 보세요',
                     actionLabel: '변경',
                     onEdit: () => showEditDialog('이메일', emailController),
                   ),
@@ -232,7 +231,7 @@ class _MyPageState extends State<MyPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (userType == 'LOCAL') ...[
+                if (userType == 'local') ...[
                   GestureDetector(
                     onTap: _showPasswordChangeDialog,
                     child: Text(

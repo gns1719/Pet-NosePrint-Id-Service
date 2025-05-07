@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:nose_stamp/config/api_config.dart';
 import 'package:nose_stamp/services/auth_service.dart';
+import 'nose_stamp_register_page.dart';
 
 class DogDetailPage extends StatefulWidget {
   final Map<String, String> dogInfo;
@@ -103,11 +105,10 @@ class _DogDetailPageState extends State<DogDetailPage> {
         throw Exception('로그인이 필요합니다');
       }
 
-      // 1. Presigned URL 요청
       final presignedUrlResponse = await http.get(
         Uri.parse(ApiConfig.presignedUrl(widget.dogInfo['petId']!)),
         headers: {
-          'Authorization': 'Bearer $accessToken',
+          'Authorization': 'Bearer ' + accessToken,
         },
       );
 
@@ -117,7 +118,6 @@ class _DogDetailPageState extends State<DogDetailPage> {
 
       final presignedUrl = presignedUrlResponse.body;
 
-      // 2. S3에 이미지 업로드
       final imageBytes = await _selectedImage!.readAsBytes();
       final uploadResponse = await http.put(
         Uri.parse(presignedUrl),
@@ -131,20 +131,17 @@ class _DogDetailPageState extends State<DogDetailPage> {
         throw Exception('이미지 업로드에 실패했습니다');
       }
 
-      // 3. 타임스탬프 포함한 최종 이미지 URL 생성
       final String baseImageUrl = presignedUrl.split('?').first;
       final int timestamp = DateTime.now().millisecondsSinceEpoch;
       final String imageUrlWithTimestamp = '$baseImageUrl?ts=$timestamp';
 
-      // 4. 서버에 PATCH 요청으로 이미지 URL 업데이트
       final petIdRaw = widget.dogInfo['petId'];
       final int petId = int.tryParse(petIdRaw.toString()) ?? (throw Exception("petId 형변환 실패"));
-
 
       final updateResponse = await http.patch(
         Uri.parse(ApiConfig.petProfileUrl(petId)),
         headers: {
-          'Authorization': 'Bearer $accessToken',
+          'Authorization': 'Bearer ' + accessToken,
           'Content-Type': 'application/json',
         },
         body: json.encode({
@@ -185,16 +182,14 @@ class _DogDetailPageState extends State<DogDetailPage> {
         throw Exception('로그인이 필요합니다');
       }
 
-      // 새로운 이미지가 선택되었다면 먼저 업로드
       if (_selectedImage != null) {
         await _uploadImage();
       }
 
-      // 반려동물 정보 업데이트
       final response = await http.put(
         Uri.parse(ApiConfig.petUpdateUrl(int.parse(widget.dogInfo['petId']!))),
         headers: {
-          'Authorization': 'Bearer $accessToken',
+          'Authorization': 'Bearer ' + accessToken,
           'Content-Type': 'application/json',
         },
         body: json.encode({
@@ -203,7 +198,7 @@ class _DogDetailPageState extends State<DogDetailPage> {
           'gender': _gender,
         }),
       );
-    
+
       if (response.statusCode != 200) {
         throw Exception('반려동물 정보 수정에 실패했습니다');
       }
@@ -230,7 +225,6 @@ class _DogDetailPageState extends State<DogDetailPage> {
   void _toggleEdit() {
     setState(() {
       if (_isEditing) {
-        // 수정 취소시 원래 값으로 복원
         _nameController.text = widget.dogInfo['name']!;
         _profileUrlController.text = widget.dogInfo['profileUrl']!;
         _birthDate = DateFormat('yyyy-MM-dd').parse(widget.dogInfo['birthDate']!);
@@ -432,6 +426,32 @@ class _DogDetailPageState extends State<DogDetailPage> {
                           _gender,
                           style: GoogleFonts.notoSans(
                             fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const NoseStampRegisterPage()),
+                          );
+                          if (result == true) {
+                            debugPrint("비문 등록 완료됨 🐶");
+                          }
+                        },
+                        icon: const Icon(Icons.camera_alt),
+                        label: const Text('강아지 비문 등록'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFB88C65),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          textStyle: GoogleFonts.notoSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),
