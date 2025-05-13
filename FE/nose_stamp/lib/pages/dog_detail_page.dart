@@ -142,7 +142,7 @@ class _DogDetailPageState extends State<DogDetailPage> {
       final updateResponse = await http.patch(
         Uri.parse(ApiConfig.petProfileUrl(petId)),
         headers: {
-          'Authorization': 'Bearer ' + accessToken,
+          'Authorization': 'Bearer $accessToken',
           'Content-Type': 'application/json',
         },
         body: json.encode({
@@ -190,7 +190,7 @@ class _DogDetailPageState extends State<DogDetailPage> {
       final response = await http.put(
         Uri.parse(ApiConfig.petUpdateUrl(int.parse(widget.dogInfo['petId']!))),
         headers: {
-          'Authorization': 'Bearer ' + accessToken,
+          'Authorization': 'Bearer $accessToken',
           'Content-Type': 'application/json',
         },
         body: json.encode({

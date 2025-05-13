@@ -82,7 +82,7 @@ class _NoseStampRegisterPageState extends State<NoseStampRegisterPage> {
 
       final fileName = '$petId-$title';
       final presignedUrlResponse = await http.get(
-        Uri.parse(ApiConfig.presignedUrl(fileName)),
+        Uri.parse(ApiConfig.nosePresignedUrl(fileName)),
         headers: {
           'Authorization': 'Bearer $accessToken',
         },

@@ -29,6 +29,26 @@ public class ImageController {
         throw new IllegalArgumentException("유효하지 않은 유저입니다.");
     }
 
+    @GetMapping("/nosePresignedUrl")
+    public ResponseEntity<String> getNosePresignedUrl(@RequestParam String fileName, @AuthenticationPrincipal Integer userKey) {
+        if(petService.userExists(userKey)) {
+            String fullFileName = "nosePrint/" + userKey + "-" + fileName;
+            String presignedUrl = awsService.generatePresignedPutUrl(fullFileName);
+            return ResponseEntity.ok(presignedUrl);
+        }
+        throw new IllegalArgumentException("유효하지 않은 유저입니다.");
+    }
+
+    @GetMapping("/noseCheckPresignedUrl")
+    public ResponseEntity<String> getnoseCheckPresignedUrl(@AuthenticationPrincipal Integer userKey) {
+        if(petService.userExists(userKey)) {
+            String fullFileName = "find_dog/" + userKey;
+            String presignedUrl = awsService.generatePresignedPutUrl(fullFileName);
+            return ResponseEntity.ok(presignedUrl);
+        }
+        throw new IllegalArgumentException("유효하지 않은 유저입니다.");
+    }
+
 
 }
 
