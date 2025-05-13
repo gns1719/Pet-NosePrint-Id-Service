@@ -20,7 +20,11 @@ public class ImageController {
 
 
     @GetMapping("/presigned-url")
+<<<<<<< HEAD
     public ResponseEntity<String> getPresignedUrl(@RequestParam String fileName, @AuthenticationPrincipal Long userKey) {
+=======
+    public ResponseEntity<String> getPresignedUrl(@RequestParam String fileName, @AuthenticationPrincipal Integer userKey) {
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b
         if(petService.userExists(userKey)) {
             String fullFileName = userKey + "-" + fileName;
             String presignedUrl = awsService.generatePresignedPutUrl(fullFileName);
@@ -30,4 +34,9 @@ public class ImageController {
     }
 
 
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b

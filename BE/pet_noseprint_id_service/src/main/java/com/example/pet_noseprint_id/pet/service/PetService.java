@@ -94,7 +94,7 @@ public class PetService {
         return petRepository.findByUserId(userId);
     }*/
 
-    public List<PetInfoResponse> getPetsByUserKey(Long userKey) {
+    public List<PetInfoResponse> getPetsByUserKey(Integer userKey) {
         List<Pet> pets = petRepository.findByUserKey(userKey);
         return pets.stream()
                 .map(pet -> new PetInfoResponse(
@@ -108,8 +108,16 @@ public class PetService {
     }
 
 
+<<<<<<< HEAD
     public boolean userExists(Long userKey) {
         return petRepository.existsByUserKey(userKey);
     }
 
 }
+=======
+    public boolean userExists(Integer userKey) {
+        return petRepository.existsByUserKey(userKey);
+    }
+
+}
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b

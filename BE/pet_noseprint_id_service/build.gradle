@@ -48,6 +48,10 @@ dependencies {
 
 	//AWS S3
 	implementation 'software.amazon.awssdk:s3:2.20.14'
+<<<<<<< HEAD
+=======
+	//implementation 'software.amazon.awssdk:s3-presigner:2.20.14'
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b
 
 	//thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'

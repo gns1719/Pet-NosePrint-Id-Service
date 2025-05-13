@@ -25,18 +25,30 @@ public class PetController {
 
     @PostMapping("/register")
     public ResponseEntity<Long> addPet(@RequestBody AddPetRequest request,
+<<<<<<< HEAD
                                        @AuthenticationPrincipal Long userKey) {
 
 
         Long petId = petService.addPet(request, userKey);  // petId 반환
+=======
+                                       @AuthenticationPrincipal Integer userKey) {
+        Long userKeyLong = Long.valueOf(userKey);
+        Long petId = petService.addPet(request, userKeyLong);  // petId 반환
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b
         return ResponseEntity.status(HttpStatus.CREATED).body(petId);
     }
 
     @PatchMapping("/{petId}/profile-url")
     public ResponseEntity<Void> updatePetProfileUrl(@PathVariable Long petId,
                                                     @RequestBody UpdateProfileUrlRequest request,
+<<<<<<< HEAD
                                                     @AuthenticationPrincipal Long userKey) {
         petService.updateProfileUrl(petId, userKey, request.getProfile());
+=======
+                                                    @AuthenticationPrincipal Integer userKey) {
+        Long userKeyLong = Long.valueOf(userKey);
+        petService.updateProfileUrl(petId, userKeyLong, request.getProfile());
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b
         return ResponseEntity.ok().build();
     }
 
@@ -45,14 +57,25 @@ public class PetController {
     public ResponseEntity<PetUpdateDTO> updatePetInfo(
             @PathVariable Long petId,
             @RequestBody PetUpdateDTO request,
+<<<<<<< HEAD
             @AuthenticationPrincipal Long userKey
     ) {
         PetUpdateDTO updatedPet = petService.updatePet(petId, request, userKey);
+=======
+            @AuthenticationPrincipal Integer userKey
+    ) {
+        Long userKeyLong = Long.valueOf(userKey);
+        PetUpdateDTO updatedPet = petService.updatePet(petId, request, userKeyLong);
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b
         return ResponseEntity.ok(updatedPet);
     }
 
     @GetMapping("/list")
+<<<<<<< HEAD
     public ResponseEntity<Map<String, Object>> getMyPets(@AuthenticationPrincipal Long userKey) {
+=======
+    public ResponseEntity<Map<String, Object>> getMyPets(@AuthenticationPrincipal Integer userKey) {
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b
         List<PetInfoResponse> myPets = petService.getPetsByUserKey(userKey);
 
         Map<String, Object> response = new HashMap<>();
@@ -62,4 +85,9 @@ public class PetController {
 
         return ResponseEntity.ok(response);
     }
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b

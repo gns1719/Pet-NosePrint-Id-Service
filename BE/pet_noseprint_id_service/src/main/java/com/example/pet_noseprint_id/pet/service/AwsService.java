@@ -12,8 +12,11 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import java.time.Duration;
 
+<<<<<<< HEAD
 import static java.time.Duration.ofMinutes;
 
+=======
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b
 @Service
 public class AwsService {
 
@@ -42,11 +45,19 @@ public class AwsService {
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+<<<<<<< HEAD
                 .signatureDuration(ofMinutes(10))
+=======
+                .signatureDuration(Duration.ofMinutes(10))
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b
                 .putObjectRequest(objectRequest)
                 .build();
 
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
         return presignedRequest.url().toString();
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> baa1f6724f3798da5682ca57f49d147768a61a4b
