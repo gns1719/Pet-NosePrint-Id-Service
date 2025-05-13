@@ -108,7 +108,8 @@ class _DogDetailPageState extends State<DogDetailPage> {
       final presignedUrlResponse = await http.get(
         Uri.parse(ApiConfig.presignedUrl(widget.dogInfo['petId']!)),
         headers: {
-          'Authorization': 'Bearer ' + accessToken,
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
         },
       );
 
@@ -434,7 +435,12 @@ class _DogDetailPageState extends State<DogDetailPage> {
                         onPressed: () async {
                           final result = await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const NoseStampRegisterPage()),
+                            MaterialPageRoute(
+                              builder: (_) => NoseStampRegisterPage(
+                                petId: widget.dogInfo['petId'].toString(),
+                              ),
+                            ),
+
                           );
                           if (result == true) {
                             debugPrint("비문 등록 완료됨 🐶");
