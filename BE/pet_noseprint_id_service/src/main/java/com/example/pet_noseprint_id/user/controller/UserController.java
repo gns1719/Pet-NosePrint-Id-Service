@@ -55,4 +55,18 @@ public class UserController {
         response.setMessage("회원정보가 성공적으로 수정되었습니다.");
         return ResponseEntity.ok(response);
     }
+
+    //회원정보 수정
+    @GetMapping("/getInfo")
+    public ResponseEntity<ResponseDTO<?>> getUserInfo(@AuthenticationPrincipal Long userKey) {
+
+        UserInfoResDTO userInfo = userService.getUserInfo(userKey);
+
+        ResponseDTO<UserInfoResDTO> response = new ResponseDTO<>();
+        response.setStatus(true);
+        response.setMessage("회원 정보 조회 성공.");
+        response.setData(userInfo);
+
+        return ResponseEntity.ok(response);
+    }
 }
