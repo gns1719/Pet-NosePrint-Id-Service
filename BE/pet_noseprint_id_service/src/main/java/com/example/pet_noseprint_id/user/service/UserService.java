@@ -3,6 +3,7 @@ package com.example.pet_noseprint_id.user.service;
 
 import com.example.pet_noseprint_id.user.domain.LocalUser;
 import com.example.pet_noseprint_id.user.domain.User;
+import com.example.pet_noseprint_id.user.dto.UserInfoResDTO;
 import com.example.pet_noseprint_id.user.repository.LocalUserRepository;
 import com.example.pet_noseprint_id.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -95,5 +96,11 @@ public class UserService {
         user.setEmail(email);
 
         userRepository.save(user);
+    }
+
+    //유저 정보 조회
+    public UserInfoResDTO getUserInfo(Long userKey) {
+        return userRepository.findUserInfoByUserKey(userKey)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
