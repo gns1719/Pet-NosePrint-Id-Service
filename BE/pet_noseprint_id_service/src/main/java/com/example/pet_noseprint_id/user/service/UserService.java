@@ -3,6 +3,7 @@ package com.example.pet_noseprint_id.user.service;
 
 import com.example.pet_noseprint_id.user.domain.LocalUser;
 import com.example.pet_noseprint_id.user.domain.User;
+import com.example.pet_noseprint_id.user.dto.GetUserInfoResDTO;
 import com.example.pet_noseprint_id.user.repository.LocalUserRepository;
 import com.example.pet_noseprint_id.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +83,7 @@ public class UserService {
     }
 
     //유저 정보 변경
-    public void updateUserInfo(Long userKey, String name, String phoneNumber, String email) {
+    public void updateUserInfo(Long userKey, String phoneNumber, String email) {
         User user = userRepository.findByUserKey(userKey)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
@@ -90,10 +91,18 @@ public class UserService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        user.setName(name);
         user.setPhoneNumber(phoneNumber);
         user.setEmail(email);
 
         userRepository.save(user);
+    }
+
+    //유저 정보 조회
+    public GetUserInfoResDTO getUserInfo(Long userKey) {
+        User user = userRepository.findUserInfoByUserKey(userKey)
+                .orElseThrow(() -> new RuntimeException("해당 사용자를 찾을 수 없습니다."));
+
+        return new GetUserInfoResDTO(user.getName(),user.getPhoneNumber()
+                ,user.getEmail(),user.getLoginType());
     }
 }

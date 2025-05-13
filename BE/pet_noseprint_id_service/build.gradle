@@ -46,6 +46,9 @@ dependencies {
 	//Webflux
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+	//AWS S3
+	implementation 'software.amazon.awssdk:s3:2.20.14'
+
 	//thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 

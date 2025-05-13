@@ -48,11 +48,23 @@ public class UserController {
     @PostMapping("/update-profile")
     public ResponseEntity<ResponseDTO<?>> updateProfile(@AuthenticationPrincipal Long userKey,
                                                         @RequestBody UpdateUserInfoReqDTO request) {
-        userService.updateUserInfo(userKey, request.getName(), request.getPhoneNumber(), request.getEmail());
+        userService.updateUserInfo(userKey, request.getPhoneNumber(), request.getEmail());
 
         ResponseDTO<Long> response = new ResponseDTO<>();
         response.setStatus(true);
         response.setMessage("회원정보가 성공적으로 수정되었습니다.");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getInfo")
+    public ResponseEntity<ResponseDTO<?>> getUserInfo(@AuthenticationPrincipal Long userKey){
+
+        GetUserInfoResDTO userInfo =  userService.getUserInfo(userKey);
+
+        ResponseDTO<GetUserInfoResDTO> response = new ResponseDTO<>();
+        response.setStatus(true);
+        response.setMessage("사용자 확인이 되었습니다.");
+        response.setData(userInfo);
         return ResponseEntity.ok(response);
     }
 }
