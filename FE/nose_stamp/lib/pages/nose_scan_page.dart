@@ -2,6 +2,11 @@ import 'dart:io';
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:nose_stamp/config/api_config.dart'; // 너의 API 엔드포인트 정의된 곳
+import 'package:nose_stamp/services/auth_service.dart'; // accessToken 불러오는 곳
+import 'dart:convert';
+
 
 class NoseScanPage extends StatefulWidget {
   const NoseScanPage({super.key});
@@ -61,34 +66,79 @@ class _NoseScanPageState extends State<NoseScanPage> {
   }
 
   Future<void> sendToServer(XFile image) async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    final tokens = await AuthService().getTokens();
+    final accessToken = tokens['accessToken'];
+
+    if (accessToken == null) {
+      throw Exception('로그인이 필요합니다');
+    }
+
+    final presignedUrlResponse = await http.get(
+      Uri.parse(ApiConfig.noseCheckPresignedUrl),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (presignedUrlResponse.statusCode < 200 || presignedUrlResponse.statusCode >= 300) {
+      throw Exception('presigned URL 요청 실패: ${presignedUrlResponse.statusCode}');
+    }
+
+    final presignedUrl = presignedUrlResponse.body;
+    final imageBytes = await image.readAsBytes();
+
+    final uploadResponse = await http.put(
+      Uri.parse(presignedUrl),
+      headers: {
+        'Content-Type': 'image/jpeg',
+      },
+      body: imageBytes,
+    );
+
+    if (uploadResponse.statusCode < 200 || uploadResponse.statusCode >= 300) {
+      throw Exception('이미지 업로드 실패: ${uploadResponse.statusCode}');
+    }
+
+    // 3. 서버에 분석 요청 (이미지 URL은 생략)
+    final analysisResponse = await http.post(
+      Uri.parse(ApiConfig.noseAnalysisUrl),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (analysisResponse.statusCode < 200 || analysisResponse.statusCode >= 300) {
+      throw Exception('분석 요청 실패: ${analysisResponse.statusCode}');
+    }
+
+    final result = json.decode(analysisResponse.body);
+    debugPrint("✅ 분석 결과: $result");
+
     setState(() {
-      isLoading = true;
+      matchResult = result;
     });
 
-    try {
-      // TODO: 실제 서버 전송 로직 교체
-      await Future.delayed(const Duration(seconds: 2));
-      final response = {
-        "matched": true,
-        "dog": {
-          "name": "콩이",
-          "breed": "푸들",
-          "owner": "홍길동",
-          "phone": "010-1234-5678"
-        }
-      };
-
-      setState(() {
-        matchResult = response;
-      });
-    } catch (e) {
-      debugPrint("🚨 서버 오류: $e");
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('✅ 비문 분석이 완료되었습니다')),
+    );
+  } catch (e) {
+    debugPrint("🚨 오류: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.toString())),
+    );
+  } finally {
+    setState(() {
+      isLoading = false;
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +255,7 @@ class _NoseScanPageState extends State<NoseScanPage> {
                 Text(
                   matched
                       ? '✅ 등록된 강아지에요!'
-                      : '😢 등록되어있는 강아지가 아닌 것 같아요 ㅠㅠ',
+                      : '등록되어있는 강아지가\n   아닌 것 같아요 😢',
                   style: const TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 const SizedBox(height: 20),

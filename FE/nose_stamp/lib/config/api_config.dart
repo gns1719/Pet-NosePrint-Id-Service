@@ -17,6 +17,11 @@ class ApiConfig {
   static String get getUserUrl => '$baseUrl/users/getInfo';
   static String get updateUserUrl => '$baseUrl/users/update-profile';
   static String get changePasswordUrl => '$baseUrl/users/change-password';
+
+  //Pet nosePrint
+  static String nosePresignedUrl(String fileName) => '$baseUrl/images/nosePresignedUrl-url?fileName=$fileName';
+  static String get noseCheckPresignedUrl => '$baseUrl/';
+  static String get noseAnalysisUrl => '$baseUrl/';
   
 
   // Image endpoints
