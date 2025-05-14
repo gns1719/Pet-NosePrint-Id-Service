@@ -117,7 +117,7 @@ class _NoseScanPageState extends State<NoseScanPage> {
       throw Exception('분석 요청 실패: ${analysisResponse.statusCode}');
     }
 
-    final result = json.decode(analysisResponse.body);
+    final result = json.decode(analysisResponse.body);        // 결과 파싱 후 출력 만들어야함
     debugPrint("✅ 분석 결과: $result");
 
     setState(() {
