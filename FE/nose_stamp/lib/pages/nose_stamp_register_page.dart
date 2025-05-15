@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nose_stamp/config/api_config.dart'; // 너의 API 엔드포인트 정의된 곳
 import 'package:nose_stamp/services/auth_service.dart'; // accessToken 불러오는 곳
+import 'dart:convert';
+
 
 
 class NoseStampRegisterPage extends StatefulWidget {
@@ -82,7 +84,7 @@ class _NoseStampRegisterPageState extends State<NoseStampRegisterPage> {
 
       final fileName = '$petId-$title';
       final presignedUrlResponse = await http.get(
-        Uri.parse(ApiConfig.presignedUrl(fileName)),
+        Uri.parse(ApiConfig.nosePresignedUrl(fileName)),
         headers: {
           'Authorization': 'Bearer $accessToken',
         },
@@ -107,6 +109,23 @@ class _NoseStampRegisterPageState extends State<NoseStampRegisterPage> {
         throw Exception('[$title] 이미지 업로드 실패: ${uploadResponse.statusCode}');
       }
     }
+
+    const imageUrl = 'https://ld-awsbucket.s3.ap-northeast-2.amazonaws.com/nosePrint/'; //userKey-petId-0
+
+    final updateProfileResponse = await http.post(
+        Uri.parse(ApiConfig.noseUploadUrl(petId)),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'profile': imageUrl,
+        }),
+      );
+
+    if (updateProfileResponse.statusCode < 200 || updateProfileResponse.statusCode >= 300) {
+        throw Exception('데이터베이스 업로드 실패: ${updateProfileResponse.statusCode}');
+      }
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
