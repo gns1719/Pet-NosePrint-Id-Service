@@ -79,7 +79,7 @@
 
 
 ## 💁‍♂️ Detail Role
-+ [김회훈](https://github.com/gns1719) / Back-end & Front-end 
++ [김회훈](https://github.com/gns1719) / Back-end & Cloud-engineer
   - Spring Boot 기반 반려동물 인증 백엔드 시스템 개발
   - Redis를 활용한 JWT 리프레시 토큰 저장 및 인증 처리 구현
   - 사용자 인증 및 보안 로직 (JWT 발급, 갱신, 로그아웃 등) 개발
