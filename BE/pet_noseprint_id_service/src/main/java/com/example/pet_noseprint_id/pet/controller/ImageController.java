@@ -22,7 +22,7 @@ public class ImageController {
     @GetMapping("/presigned-url")
     public ResponseEntity<String> getPresignedUrl(@RequestParam String fileName, @AuthenticationPrincipal Integer userKey) {
         if(petService.userExists(userKey)) {
-            String fullFileName = userKey + "-" + fileName;
+            String fullFileName = "dogProfile/" + userKey + "-" + fileName;
             String presignedUrl = awsService.generatePresignedPutUrl(fullFileName);
             return ResponseEntity.ok(presignedUrl);
         }
@@ -32,7 +32,7 @@ public class ImageController {
     @GetMapping("/nosePresignedUrl")
     public ResponseEntity<String> getNosePresignedUrl(@RequestParam String fileName, @AuthenticationPrincipal Integer userKey) {
         if(petService.userExists(userKey)) {
-            String fullFileName = "nosePrint/" + userKey + "-" + fileName;
+            String fullFileName = "noseSave/" + userKey + "-" + fileName;
             String presignedUrl = awsService.generatePresignedPutUrl(fullFileName);
             return ResponseEntity.ok(presignedUrl);
         }
@@ -42,7 +42,7 @@ public class ImageController {
     @GetMapping("/noseCheckPresignedUrl")
     public ResponseEntity<String> getnoseCheckPresignedUrl(@AuthenticationPrincipal Integer userKey) {
         if(petService.userExists(userKey)) {
-            String fullFileName = "find_dog/" + userKey;
+            String fullFileName = "noseSearch/" + userKey;
             String presignedUrl = awsService.generatePresignedPutUrl(fullFileName);
             return ResponseEntity.ok(presignedUrl);
         }

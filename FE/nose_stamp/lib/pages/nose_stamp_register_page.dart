@@ -110,7 +110,7 @@ class _NoseStampRegisterPageState extends State<NoseStampRegisterPage> {
       }
     }
 
-    const imageUrl = 'https://ld-awsbucket.s3.ap-northeast-2.amazonaws.com/nosePrint/'; //userKey-petId-0
+    const imageUrl = 'https://nose-stamp-bucket.s3.ap-northeast-2.amazonaws.com/noseSave/'; //userKey-petId-0
 
     final updateProfileResponse = await http.post(
         Uri.parse(ApiConfig.noseUploadUrl(petId)),
