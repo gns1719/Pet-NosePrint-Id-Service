@@ -2,9 +2,17 @@ import 'dart:io';
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:nose_stamp/config/api_config.dart'; // 너의 API 엔드포인트 정의된 곳
+import 'package:nose_stamp/services/auth_service.dart'; // accessToken 불러오는 곳
+import 'dart:convert';
+
+
 
 class NoseStampRegisterPage extends StatefulWidget {
-  const NoseStampRegisterPage({super.key});
+  final String petId;
+  const NoseStampRegisterPage({super.key, required this.petId});
+  
 
   @override
   State<NoseStampRegisterPage> createState() => _NoseStampRegisterPageState();
@@ -57,24 +65,85 @@ class _NoseStampRegisterPageState extends State<NoseStampRegisterPage> {
   }
 
   Future<void> _submit() async {
-    if (_images.any((img) => img == null)) return;
-    setState(() => _isLoading = true);
-    try {
-      await Future.delayed(const Duration(seconds: 2)); // TODO: 네가 전송 로직 작성
-      if (!mounted) return;
+  if (_images.any((img) => img == null)) return;
+  setState(() => _isLoading = true);
+
+  try {
+
+    final tokens = await AuthService().getTokens();
+      final accessToken = tokens['accessToken'];
+
+      if (accessToken == null) {
+        throw Exception('로그인이 필요합니다');
+      }
+    final petId = widget.petId.toString();
+
+    for (int i = 0; i < _images.length; i++) {
+      final image = _images[i];
+      final title = _titles[i]; // '정면', '아래', '위'
+
+      final fileName = '$petId-$title';
+      final presignedUrlResponse = await http.get(
+        Uri.parse(ApiConfig.nosePresignedUrl(fileName)),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (presignedUrlResponse.statusCode < 200 || presignedUrlResponse.statusCode >= 300) {
+        throw Exception('[$title] presigned URL 요청 실패: ${presignedUrlResponse.statusCode}');
+      }
+
+      final presignedUrl = presignedUrlResponse.body;
+      final imageBytes = await image!.readAsBytes();
+
+      final uploadResponse = await http.put(
+        Uri.parse(presignedUrl),
+        headers: {
+          'Content-Type': 'image/jpeg',
+        },
+        body: imageBytes,
+      );
+
+      if (uploadResponse.statusCode < 200 || uploadResponse.statusCode >= 300) {
+        throw Exception('[$title] 이미지 업로드 실패: ${uploadResponse.statusCode}');
+      }
+    }
+
+    const imageUrl = 'https://nose-stamp-bucket.s3.ap-northeast-2.amazonaws.com/noseSave/'; //userKey-petId-0
+
+    final updateProfileResponse = await http.post(
+        Uri.parse(ApiConfig.noseUploadUrl(petId)),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'profile': imageUrl,
+        }),
+      );
+
+    if (updateProfileResponse.statusCode < 200 || updateProfileResponse.statusCode >= 300) {
+        throw Exception('데이터베이스 업로드 실패: ${updateProfileResponse.statusCode}');
+      }
+
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('✅ 비문이 성공적으로 등록되었습니다')),
       );
       Navigator.of(context).pop(true);
-    } catch (e) {
-      if (!mounted) return;
+    }
+  } catch (e) {
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('🚨 등록 실패: $e')),
       );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
     }
+  } finally {
+    if (mounted) setState(() => _isLoading = false);
   }
+}
+
 
   Widget _buildCameraBackground() {
     final size = MediaQuery.of(context).size;

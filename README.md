@@ -1,4 +1,3 @@
-<<<<<<< develop
 # 우송대학교 2025년도 1학기 캡스톤 디자인 1
 
 <div align="center" >
@@ -80,12 +79,18 @@
 
 
 ## 💁‍♂️ Detail Role
-+ [김회훈](https://github.com/gns1719) / Back-end & Front-end 
++ [김회훈](https://github.com/gns1719) / Back-end & Cloud-engineer
   - Spring Boot 기반 반려동물 인증 백엔드 시스템 개발
   - Redis를 활용한 JWT 리프레시 토큰 저장 및 인증 처리 구현
   - 사용자 인증 및 보안 로직 (JWT 발급, 갱신, 로그아웃 등) 개발
   - Flutter 앱과의 통신을 위한 REST API 설계 및 구현
   - Spring REST Docs를 활용한 API 문서 자동화 및 정리
+  - EC2 인스턴스를 활용한 Spring Boot 백엔드 서버 배포
+  - RDS(MySQL)를 활용한 사용자 및 인증 정보 관리
+  - ElastiCache(Redis) 기반 토큰 저장소 구성 및 보안 설정
+  - 코사인 유사도 및 유클리드 거리 기반의 비문 유사도 비교 시스템 구축
+
+
 
   <!-- 
     예시 입니다. 각자 기능 구현 후 하나 씩 추가해주세요.
@@ -116,5 +121,4 @@
 
  <br>
 =======
-# Pet-NosePrint-Id-Service
->>>>>>> marster
+

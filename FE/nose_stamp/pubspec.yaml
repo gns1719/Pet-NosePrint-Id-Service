@@ -33,3 +33,9 @@ flutter:
 
 dev_dependencies:
   flutter_lints: ^3.0.1  # 또는 최신 버전
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"

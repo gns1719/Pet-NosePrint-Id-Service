@@ -1,9 +1,6 @@
 package com.example.pet_noseprint_id.pet.controller;
 
-import com.example.pet_noseprint_id.pet.dto.AddPetRequest;
-import com.example.pet_noseprint_id.pet.dto.PetInfoResponse;
-import com.example.pet_noseprint_id.pet.dto.PetUpdateDTO;
-import com.example.pet_noseprint_id.pet.dto.UpdateProfileUrlRequest;
+import com.example.pet_noseprint_id.pet.dto.*;
 import com.example.pet_noseprint_id.pet.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -62,5 +59,23 @@ public class PetController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/register/nose")
+    public ResponseEntity<Void> addPetNose(@RequestBody AddPetNoseRequest request,
+                                           @AuthenticationPrincipal Integer userKey) {
+        Long userKeyLong = Long.valueOf(userKey);
+        petService.addPetNose(request, userKeyLong);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
+    //임시(모델 학습 시키는 코드)
+    /*@PostMapping("/noseAnalysisUrl")
+    public ResponseEntity<FindUserDTO> findPets(@AuthenticationPrincipal Integer userKey) {
+
+        FindUserDTO f = null;
+
+        return ResponseEntity.ok(f);
+    }*/
 }
 
