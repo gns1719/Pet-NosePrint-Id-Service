@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
-        android:label="nose_stamp"
+        android:label="코도장"
         android:name="${applicationName}"
         
         android:icon="@mipmap/ic_launcher">
