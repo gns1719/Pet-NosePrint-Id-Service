@@ -99,7 +99,7 @@ public class PetService {
         return petRepository.findByUserId(userId);
     }*/
 
-    public List<PetInfoResponse> getPetsByUserKey(Integer userKey) {
+    public List<PetInfoResponse> getPetsByUserKey(Long userKey) {
         List<Pet> pets = petRepository.findByUserKey(userKey);
         return pets.stream()
                 .map(pet -> new PetInfoResponse(
@@ -113,7 +113,7 @@ public class PetService {
     }
 
 
-    public boolean userExists(Integer userKey) {
+    public boolean userExists(Long userKey) {
         return petRepository.existsByUserKey(userKey);
     }
 

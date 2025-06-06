@@ -21,18 +21,16 @@ public class PetController {
 
     @PostMapping("/register")
     public ResponseEntity<Long> addPet(@RequestBody AddPetRequest request,
-                                       @AuthenticationPrincipal Integer userKey) {
-        Long userKeyLong = Long.valueOf(userKey);
-        Long petId = petService.addPet(request, userKeyLong);  // petId 반환
+                                       @AuthenticationPrincipal Long userKey) {
+        Long petId = petService.addPet(request, userKey);  // petId 반환
         return ResponseEntity.status(HttpStatus.CREATED).body(petId);
     }
 
     @PatchMapping("/{petId}/profile-url")
     public ResponseEntity<Void> updatePetProfileUrl(@PathVariable Long petId,
                                                     @RequestBody UpdateProfileUrlRequest request,
-                                                    @AuthenticationPrincipal Integer userKey) {
-        Long userKeyLong = Long.valueOf(userKey);
-        petService.updateProfileUrl(petId, userKeyLong, request.getProfile());
+                                                    @AuthenticationPrincipal Long userKey) {
+        petService.updateProfileUrl(petId, userKey, request.getProfile());
         return ResponseEntity.ok().build();
     }
 
@@ -41,15 +39,14 @@ public class PetController {
     public ResponseEntity<PetUpdateDTO> updatePetInfo(
             @PathVariable Long petId,
             @RequestBody PetUpdateDTO request,
-            @AuthenticationPrincipal Integer userKey
+            @AuthenticationPrincipal Long userKey
     ) {
-        Long userKeyLong = Long.valueOf(userKey);
-        PetUpdateDTO updatedPet = petService.updatePet(petId, request, userKeyLong);
+        PetUpdateDTO updatedPet = petService.updatePet(petId, request, userKey);
         return ResponseEntity.ok(updatedPet);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Map<String, Object>> getMyPets(@AuthenticationPrincipal Integer userKey) {
+    public ResponseEntity<Map<String, Object>> getMyPets(@AuthenticationPrincipal Long userKey) {
         List<PetInfoResponse> myPets = petService.getPetsByUserKey(userKey);
 
         Map<String, Object> response = new HashMap<>();
@@ -62,16 +59,15 @@ public class PetController {
 
     @PostMapping("/register/nose")
     public ResponseEntity<Void> addPetNose(@RequestBody AddPetNoseRequest request,
-                                           @AuthenticationPrincipal Integer userKey) {
-        Long userKeyLong = Long.valueOf(userKey);
-        petService.addPetNose(request, userKeyLong);
+                                           @AuthenticationPrincipal Long userKey) {
+        petService.addPetNose(request, userKey);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
     //임시(모델 학습 시키는 코드)
     /*@PostMapping("/noseAnalysisUrl")
-    public ResponseEntity<FindUserDTO> findPets(@AuthenticationPrincipal Integer userKey) {
+    public ResponseEntity<FindUserDTO> findPets(@AuthenticationPrincipal Long userKey) {
 
         FindUserDTO f = null;
 

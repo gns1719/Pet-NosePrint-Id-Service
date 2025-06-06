@@ -4,6 +4,7 @@ import com.example.pet_noseprint_id.user.dto.ResponseDTO;
 import com.example.pet_noseprint_id.user.dto.LoginUserResDTO;
 import com.example.pet_noseprint_id.user.service.OAuthLoginService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class OAuthUserController {
 
     private final OAuthLoginService oAuthLoginService;
+
 
     // <editor-fold desc="카카오">
 

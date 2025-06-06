@@ -7,6 +7,6 @@ import java.util.List;
 
 
 public interface PetRepository extends CrudRepository<Pet, Long> {
-    List<Pet> findByUserKey(Integer userKey);
-    boolean existsByUserKey(Integer userKey);
+    List<Pet> findByUserKey(Long userKey);
+    boolean existsByUserKey(Long userKey);
 }
