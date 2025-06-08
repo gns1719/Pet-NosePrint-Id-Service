@@ -7,7 +7,6 @@ def lbp_basic(gray_image):
     def lbp_func(values):
         center = values[4]
         binary = (values >= center).astype(np.uint8)
-        # exclude center pixel and compute LBP as clockwise binary pattern
         lbp_value = (
             (binary[0] << 7) | (binary[1] << 6) |
             (binary[2] << 5) | (binary[5] << 4) |
@@ -20,12 +19,15 @@ def lbp_basic(gray_image):
     lbp_image = generic_filter(padded_image, lbp_func, size=3)
     return lbp_image.astype(np.uint8)
 
-def preprocess_lbp(image_path):
-    img = Image.open(image_path).convert('L')  # grayscale
-    img_np = np.array(img)
+def preprocess_lbp(pil_image):
+    """
+    PIL.Image 객체를 받아서 LBP 전처리 후 Tensor 반환
+    """
+    img_gray = pil_image.convert('L')
+    img_np = np.array(img_gray)
 
     lbp = lbp_basic(img_np)
-    lbp = (lbp / lbp.max() * 255).astype(np.uint8)  # normalize for visualization
+    lbp = (lbp / lbp.max() * 255).astype(np.uint8)
 
     lbp_img = Image.fromarray(lbp).convert('RGB')
 
@@ -34,4 +36,4 @@ def preprocess_lbp(image_path):
         transforms.ToTensor(),
         transforms.Normalize([0.5]*3, [0.5]*3)
     ])
-    return transform(lbp_img).unsqueeze(0)
+    return transform(lbp_img).unsqueeze(0)  # (1, 3, 224, 224)
