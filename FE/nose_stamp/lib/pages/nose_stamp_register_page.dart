@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nose_stamp/config/api_config.dart'; // 너의 API 엔드포인트 정의된 곳
 import 'package:nose_stamp/services/auth_service.dart'; // accessToken 불러오는 곳
-import 'dart:convert';
 
 
 
@@ -110,26 +109,24 @@ class _NoseStampRegisterPageState extends State<NoseStampRegisterPage> {
       }
     }
 
-    const imageUrl = 'https://nose-stamp-bucket.s3.ap-northeast-2.amazonaws.com/noseSave/'; //userKey-petId-0
 
-    final updateProfileResponse = await http.post(
-        Uri.parse(ApiConfig.noseUploadUrl(petId)),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'profile': imageUrl,
-        }),
-      );
+    // 2. 모델 분석 요청 (업로드 성공 이후)
+    final analysisResponse = await http.post(
+      Uri.parse(ApiConfig.noseSaveCheck(petId)),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+    );
 
-    if (updateProfileResponse.statusCode < 200 || updateProfileResponse.statusCode >= 300) {
-        throw Exception('데이터베이스 업로드 실패: ${updateProfileResponse.statusCode}');
-      }
+    if (analysisResponse.statusCode < 200 || analysisResponse.statusCode >= 300) {
+      throw Exception('분석 요청 실패: ${analysisResponse.statusCode}');
+    }
 
+    // 분석 결과 자체는 무시하고 완료 메시지만 표시
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ 비문이 성공적으로 등록되었습니다')),
+        const SnackBar(content: Text('✅ 비문 등록 및 분석이 완료되었습니다')),
       );
       Navigator.of(context).pop(true);
     }
