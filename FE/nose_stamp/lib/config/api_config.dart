@@ -23,6 +23,7 @@ class ApiConfig {
   static String noseUploadUrl(String fileName) => '$baseUrl/pets/register/nose?fileName=$fileName';
   static String get noseCheckPresignedUrl => '$baseUrl/images/noseCheckPresignedUrl';
   static String get noseAnalysisUrl => '$baseUrl/pets/noseAnalysisUrl';
+  static String noseSaveCheck(String filename) => '$baseUrl/pets/noseSaveSuccess';
   
   
 

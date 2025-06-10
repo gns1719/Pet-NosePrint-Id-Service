@@ -37,11 +37,17 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
                 })();
               """);
 
-              final jsonStr = (raw as String)
+              String jsonStr = raw.toString()
                   .replaceAll(RegExp(r'^"|"$'), '')
-                  .replaceAll(r'\"', '"');
+                  .replaceAll(r'\\"', '"');
 
-              final Map<String, dynamic> jsonData = json.decode(jsonStr);
+              // JSON이 아닐 경우 무시 (HTML은 WebView에서 보여지기만 하면 됨)
+              Map<String, dynamic> jsonData;
+              try {
+                jsonData = json.decode(jsonStr);
+              } catch (_) {
+                return;
+              }
 
               if (jsonData['message'] == 'User login successful.') {
                 final data = jsonData['data'];
@@ -64,7 +70,7 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
                 );
               }
             } catch (e) {
-              debugPrint("❌ 로그인 응답 파싱 실패: $e");
+              debugPrint("❌ 로그인 응답 파싱 중 예외: $e");
             }
           },
         ),
@@ -80,17 +86,7 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
       appBar: AppBar(
         title: Text('${widget.provider} 로그인'),
       ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: _controller),
-          Positioned.fill(
-            child: IgnorePointer(
-              ignoring: true,
-              child: Container(color: Colors.white), // JSON 화면 덮어버림
-            ),
-          ),
-        ],
-      ),
+      body: WebViewWidget(controller: _controller),
     );
   }
 }
