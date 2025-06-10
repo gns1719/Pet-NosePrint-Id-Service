@@ -7,7 +7,6 @@ import com.example.pet_noseprint_id.pet.dto.AddPetNoseRequest;
 import com.example.pet_noseprint_id.pet.dto.AddPetRequest;
 import com.example.pet_noseprint_id.pet.dto.PetInfoResponse;
 import com.example.pet_noseprint_id.pet.dto.PetUpdateDTO;
-import com.example.pet_noseprint_id.pet.repository.NosePrintRepository;
 import com.example.pet_noseprint_id.pet.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 public class PetService {
 
     private final PetRepository petRepository;
-    private final NosePrintRepository nosePrintRepository;
 
     public Long addPet(AddPetRequest request, Long userKey) {
         Pet pet = new Pet(
@@ -38,17 +36,6 @@ public class PetService {
         return saved.getPetId();
     }
 
-    public void addPetNose(AddPetNoseRequest request, Long userKey) {
-        String nose = request.getNosePrint();
-        nose = nose + userKey + "-" + request.getPetId() + "-0";
-
-        NosePrint nosePrint = new NosePrint(
-                request.getPetId(),
-                userKey,
-                nose
-        );
-        nosePrintRepository.save(nosePrint);
-    }
 
 
     public void updateProfileUrl(Long petId, Long userKey, String profileUrl) {
