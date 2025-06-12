@@ -35,7 +35,7 @@ public class LocalUserService {
     public Long saveLocal(LocalUser localUser) {
 
         // 로컬 회원 정보 저장 (User_ID 참조)
-        return localUserRepository.save(localUser).getUserKey();
+        return localUserRepository.save(localUser).getLocalKey();
     }
 
     // 로그인

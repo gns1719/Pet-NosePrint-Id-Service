@@ -3,6 +3,7 @@ package com.example.pet_noseprint_id.pet.service;
 import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.SdkBytes;
@@ -16,19 +17,16 @@ import java.util.Base64;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class SageMakerService {
 
     @Value("${aws.sagemaker.endpoint-name}")
     private String endpointName;
 
-    private final SageMakerRuntimeClient runtimeClient;
+    private final SageMakerRuntimeClient sageMakerClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public SageMakerService() {
-        this.runtimeClient = SageMakerRuntimeClient.builder()
-                .region(Region.AP_NORTHEAST_2)
-                .build();
-    }
+
 
     public float[] predictFromImage(InputStream imageStream) throws Exception {
         byte[] imageBytes = IOUtils.toByteArray(imageStream);
@@ -40,12 +38,16 @@ public class SageMakerService {
                 .body(SdkBytes.fromUtf8String("{\"image_base64\": \"" + base64Image + "\"}"))
                 .build();
 
-        InvokeEndpointResponse response = runtimeClient.invokeEndpoint(request);
+        InvokeEndpointResponse response = sageMakerClient.invokeEndpoint(request);
         String result = response.body().asUtf8String();
 
         JsonNode json = objectMapper.readTree(result);
         JsonNode embeddingNode = json.get("embedding");
 
-        return objectMapper.convertValue(embeddingNode, float[].class);
+        // float[]로 변환
+        float[] embeddingArray = objectMapper.convertValue(embeddingNode, float[].class);
+
+
+        return embeddingArray;
     }
 }

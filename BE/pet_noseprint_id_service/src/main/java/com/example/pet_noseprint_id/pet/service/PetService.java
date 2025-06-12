@@ -1,9 +1,7 @@
 package com.example.pet_noseprint_id.pet.service;
 
 
-import com.example.pet_noseprint_id.pet.domain.NosePrint;
 import com.example.pet_noseprint_id.pet.domain.Pet;
-import com.example.pet_noseprint_id.pet.dto.AddPetNoseRequest;
 import com.example.pet_noseprint_id.pet.dto.AddPetRequest;
 import com.example.pet_noseprint_id.pet.dto.PetInfoResponse;
 import com.example.pet_noseprint_id.pet.dto.PetUpdateDTO;
@@ -57,7 +55,7 @@ public class PetService {
                 pet.getGender()
         );
 
-        petRepository.save(updated);
+        petRepository.update(updated);
     }
 
 
@@ -73,7 +71,7 @@ public class PetService {
         pet.setBirth(request.getBirth());
         pet.setGender(request.getGender());
 
-        petRepository.save(pet);
+        petRepository.update(pet);
 
         return new PetUpdateDTO(
                 pet.getName(),
@@ -82,9 +80,7 @@ public class PetService {
         );
     }
 
-    /*public List<Pet> getPetsByUserId(String userId) {
-        return petRepository.findByUserId(userId);
-    }*/
+
 
     public List<PetInfoResponse> getPetsByUserKey(Long userKey) {
         List<Pet> pets = petRepository.findByUserKey(userKey);
@@ -104,4 +100,7 @@ public class PetService {
         return petRepository.existsByUserKey(userKey);
     }
 
+    public Optional<Pet> findPetInfoByPetId(Long petId) {
+        return petRepository.findById(petId);
+    }
 }

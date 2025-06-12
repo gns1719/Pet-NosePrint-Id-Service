@@ -1,7 +1,7 @@
 package com.example.pet_noseprint_id.user.service;
 
-import com.example.pet_noseprint_id.user.redis.RefreshToken;
-import com.example.pet_noseprint_id.user.repository.RefreshTokenRepository;
+import com.example.pet_noseprint_id.user.redis.domain.RefreshToken;
+import com.example.pet_noseprint_id.user.redis.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

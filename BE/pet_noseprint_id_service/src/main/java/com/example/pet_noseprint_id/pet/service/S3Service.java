@@ -12,10 +12,8 @@ import java.io.InputStream;
 public class S3Service {
     private final S3Client s3Client;
 
-    public S3Service() {
-        this.s3Client = S3Client.builder()
-                .region(Region.AP_NORTHEAST_2)
-                .build();
+    public S3Service(S3Client s3Client) {
+        this.s3Client = s3Client;
     }
 
     public InputStream downloadImage(String bucket, String key) {
