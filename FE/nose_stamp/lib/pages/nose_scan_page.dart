@@ -104,6 +104,11 @@ class _NoseScanPageState extends State<NoseScanPage> {
       throw Exception('이미지 업로드 실패: ${uploadResponse.statusCode}');
     }
 
+    setState(() {
+      isLoading = true;
+    });
+
+
     // 3. 서버에 분석 요청 (이미지 URL은 생략)
     final analysisResponse = await http.post(
       Uri.parse(ApiConfig.noseAnalysisUrl),
@@ -145,6 +150,24 @@ class _NoseScanPageState extends State<NoseScanPage> {
     if (!_isInitialized) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+    if (isLoading) {
+    return const Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: Colors.white),
+            SizedBox(height: 16),
+            Text(
+              '🔍 비문 분석 중입니다...',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
     if (matchResult != null) return _buildResultView();
     if (previewImage != null) return _buildPreviewView();
@@ -235,56 +258,64 @@ class _NoseScanPageState extends State<NoseScanPage> {
 
   // ✅ 결과 화면
   Widget _buildResultView() {
-    final matched = matchResult!['matched'] as bool;
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.85)),
+  if (matchResult == null) {
+    return const Center(child: Text("분석 결과가 없습니다."));
+  }
+
+  final pet = matchResult!;
+
+  return Scaffold(
+    body: Stack(
+      children: [
+        Positioned.fill(
+          child: Container(color: Colors.black.withOpacity(0.85)),
+        ),
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.pets, color: Colors.greenAccent, size: 80),
+              const SizedBox(height: 20),
+              const Text('✅ 등록된 강아지 정보입니다!',
+                  style: TextStyle(color: Colors.white, fontSize: 20)),
+              const SizedBox(height: 20),
+              Text("이름: ${pet['name']}", style: _infoStyle),
+              Text("생일: ${pet['birth']}", style: _infoStyle),
+              Text("성별: ${pet['gender']}", style: _infoStyle),
+              Text("견주 전화번호: ${pet['phoneNumber']}", style: _infoStyle),
+              const SizedBox(height: 40),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    previewImage = null;
+                    matchResult = null;
+                  });
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFB88C65)),
+                child: const Text("카메라로 돌아가기"),
+              ),
+            ],
           ),
-          Center(
+        ),
+        if (isLoading)
+          const Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  matched ? Icons.check_circle : Icons.error_outline,
-                  color: matched ? Colors.greenAccent : Colors.redAccent,
-                  size: 80,
-                ),
-                const SizedBox(height: 20),
+                CircularProgressIndicator(color: Colors.white),
+                SizedBox(height: 20),
                 Text(
-                  matched
-                      ? '✅ 등록된 강아지에요!'
-                      : '등록되어있는 강아지가\n   아닌 것 같아요 😢',
-                  style: const TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                const SizedBox(height: 20),
-                if (matched) ...[
-                  Text("이름: ${matchResult!['dog']['name']}", style: _infoStyle),
-                  Text("견종: ${matchResult!['dog']['breed']}", style: _infoStyle),
-                  Text("견주: ${matchResult!['dog']['owner']}", style: _infoStyle),
-                  Text("전화: ${matchResult!['dog']['phone']}", style: _infoStyle),
-                ],
-                const SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      previewImage = null;
-                      matchResult = null;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFB88C65)),
-                  child: const Text("카메라로 돌아가기"),
+                  '🔍 비문 분석 중입니다...',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ],
             ),
           ),
-          if (isLoading)
-            const Center(child: CircularProgressIndicator(color: Colors.white)),
-        ],
-      ),
-    );
-  }
+      ],
+    ),
+  );
+}
+
 
   TextStyle get _infoStyle => const TextStyle(color: Colors.white70, fontSize: 16);
 

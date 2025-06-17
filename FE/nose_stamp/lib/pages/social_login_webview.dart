@@ -16,6 +16,7 @@ class SocialLoginWebView extends StatefulWidget {
 
 class _SocialLoginWebViewState extends State<SocialLoginWebView> {
   late final WebViewController _controller;
+  bool _completed = false;
 
   @override
   void initState() {
@@ -25,10 +26,6 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onNavigationRequest: (request) {
-            debugPrint("🔁 이동 URL: ${request.url}");
-            return NavigationDecision.navigate;
-          },
           onPageFinished: (url) async {
             try {
               final raw = await _controller.runJavaScriptReturningResult("""
@@ -41,18 +38,12 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
                   .replaceAll(RegExp(r'^"|"$'), '')
                   .replaceAll(r'\\"', '"');
 
-              // JSON이 아닐 경우 무시 (HTML은 WebView에서 보여지기만 하면 됨)
-              Map<String, dynamic> jsonData;
-              try {
-                jsonData = json.decode(jsonStr);
-              } catch (_) {
-                return;
-              }
+              // ✅ JSON만 파싱 (이제 화면에는 절대 안 뜸)
+              final jsonData = json.decode(jsonStr);
 
               if (jsonData['message'] == 'User login successful.') {
-                final data = jsonData['data'];
-                final accessToken = data['accessToken'];
-                final refreshToken = data['refreshToken'];
+                final accessToken = jsonData['data']['accessToken'];
+                final refreshToken = jsonData['data']['refreshToken'];
 
                 await AuthService().saveTokens(
                   accessToken: accessToken,
@@ -61,32 +52,36 @@ class _SocialLoginWebViewState extends State<SocialLoginWebView> {
 
                 if (!mounted) return;
 
+                setState(() => _completed = true);
+
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const MainLayout(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const MainLayout()),
                   (route) => false,
                 );
               }
             } catch (e) {
-              debugPrint("❌ 로그인 응답 파싱 중 예외: $e");
+              debugPrint("❌ 로그인 파싱 실패: $e");
             }
           },
         ),
       )
-      ..loadRequest(
-        Uri.parse(ApiConfig.socialLoginUrl(widget.provider)),
-      );
+      ..loadRequest(Uri.parse(ApiConfig.socialLoginUrl(widget.provider)));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.provider} 로그인'),
+      appBar: AppBar(title: Text('${widget.provider} 로그인')),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+          if (_completed)
+            Container(
+              color: Colors.white,
+            ),
+        ],
       ),
-      body: WebViewWidget(controller: _controller),
     );
   }
 }
