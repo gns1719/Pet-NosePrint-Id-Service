@@ -145,4 +145,17 @@ public class OAuthLoginService {
                 .refreshToken(serverRefreshToken)
                 .build();
     }
+
+
+    public String getLoginUrl(String type) {
+        String loginUrl;
+        if (type == "kakao")
+            loginUrl= kakaoService.getUrl();
+        else if (type == "naver")
+            loginUrl = naverService.getUrl();
+        else
+            loginUrl = googleService.getUrl();
+
+        return loginUrl;
+    }
 }

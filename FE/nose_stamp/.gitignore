@@ -18,6 +18,13 @@ migrate_working_dir/
 *.iws
 .idea/
 
+# CocoaPods
+Pods/
+
+# macOS system files
+.DS_Store
+
+
 # VS Code 설정 파일 (공유 원할 시 주석 제거)
 /.vscode/
 

@@ -2,10 +2,7 @@ package com.example.pet_noseprint_id.user.controller;
 
 import com.example.pet_noseprint_id.user.domain.LocalUser;
 import com.example.pet_noseprint_id.user.domain.User;
-import com.example.pet_noseprint_id.user.dto.CreateAccessTokenReqDTO;
-import com.example.pet_noseprint_id.user.dto.LoginUserReqDTO;
-import com.example.pet_noseprint_id.user.dto.LoginUserResDTO;
-import com.example.pet_noseprint_id.user.dto.ResponseDTO;
+import com.example.pet_noseprint_id.user.dto.*;
 import com.example.pet_noseprint_id.user.service.LocalUserService;
 import com.example.pet_noseprint_id.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +30,8 @@ public class LocalUserController {
 
         ResponseDTO<Long> response = new ResponseDTO<>();
         response.setStatus(true);
-        response.setMessage("User with id already exists");
+
+        response.setMessage("사용 가능한 아이디 입니다.");
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -76,5 +74,19 @@ public class LocalUserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
+
+    // 비밀번호 찾기
+    @PostMapping("/find-pw")
+    public ResponseEntity<ResponseDTO<?>> findPw(@RequestBody FindPasswordReqDTO request) {
+        userService.findPassword(request.getUserId());
+
+        ResponseDTO<LoginUserResDTO> response = new ResponseDTO<>();
+        response.setStatus(true);
+        response.setMessage("임시 비밀번호가 이메일로 전송되었습니다.");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
 
 }
